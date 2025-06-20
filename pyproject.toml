@@ -3,7 +3,11 @@ name = "aprosys"
 version = "0.1.0"
 description = ""
 authors = [
-    {name = "Gabriel Rosalino",email = "gabriel.frosalino@gmail.com"}
+    {name = "Anderson Florentino da Silva"},
+    {name = "Gabriel Rosalino",email = "gabriel.frosalino@gmail.com"},
+    {name = "Lorena Piacente Nazário"},
+    {name = "Paola Camila Dias de Moraes"},
+    {name = "Pedro Vinícius Diogo Marthins de Araujo"},
 ]
 readme = "README.md"
 requires-python = ">=3.13, <4.0"
