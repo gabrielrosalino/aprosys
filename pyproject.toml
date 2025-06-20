@@ -1,0 +1,47 @@
+[project]
+name = "aprosys"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Gabriel Rosalino",email = "gabriel.frosalino@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.13, <4.0"
+
+dependencies = [
+    "django (>=5.2.3,<6.0.0)",
+]
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.12.0"
+pytest = "^8.4.1"
+pytest-cov = "^6.2.1"
+taskipy = "^1.14.1"
+
+[tool.ruff]
+line-length = 79
+extend-exclude = ['migrations']
+
+[tool.ruff.lint]
+preview = true
+select = ['I', 'F', 'E', 'W', 'PL', 'PT']
+
+[tool.ruff.format]
+preview = true
+quote-style = 'single'
+
+[tool.pytest.ini_options]
+pythonpath = "."
+addopts = '-p no:warnings'
+
+[tool.taskipy.tasks]
+lint = 'ruff check'
+pre_format = 'ruff check --fix'
+format = 'ruff format'
+run = 'python aprosys/manage.py runserver' # inicia servidor django
+test = 'pytest -s -x --cov=fastapi_zero -vv'
+post_test = 'coverage html'
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
