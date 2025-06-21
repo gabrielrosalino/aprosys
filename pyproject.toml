@@ -42,9 +42,9 @@ addopts = '-p no:warnings'
 lint = 'ruff check'
 pre_format = 'ruff check --fix'
 format = 'ruff format'
-makemigrations = 'python aprosys/manage.py makemigrations'
-migrate = 'python aprosys/manage.py migrate'
-run = 'python aprosys/manage.py runserver' # inicia servidor django
+makemigrations = 'cd $(git rev-parse --show-toplevel) && python aprosys/manage.py makemigrations'
+migrate = 'cd $(git rev-parse --show-toplevel) && python aprosys/manage.py migrate'
+run = 'cd $(git rev-parse --show-toplevel) && python aprosys/manage.py runserver'
 test = 'pytest -s -x --cov=fastapi_zero -vv'
 post_test = 'coverage html'
 
