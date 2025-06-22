@@ -1,0 +1,138 @@
+*  {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+    align-items: center;
+    background-color: #00172D;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+/* ----------------- FORMULÁRIO E LOGO ----------------- */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.logo {
+    margin-bottom: 20px;
+}
+
+.form-container {
+    width: 500px;
+    max-width: 90vw;
+    background: #173048;
+    padding: 30px 30px;
+    border-radius: 30px;
+    box-shadow: -20px 20px 0px rgba(0, 0, 0, 0.2);
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-block-end: 10px;
+}
+
+.input-box input {
+    width: 100%;
+    font-size: 18px;
+    border-radius: 30px;
+    padding: 15px;
+    border: none;
+}
+
+.esqueci-senha {
+    display: flex;
+    justify-content: end;
+}
+
+.esqueci-senha a {
+    color: #b6b8b8;
+}
+
+.container form .button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+}
+
+form .button input {
+    height: 45px;
+    min-width: 125px;
+    padding: 0 20px; 
+    font-size: 20px;
+    background-color: #00A19A;
+    border-radius: 30px;
+    color: #fff;
+    border: none;
+    cursor: pointer; 
+    white-space: nowrap; 
+}
+
+form .button input:hover {
+    background-color: #008d87;
+    transform: scale(1.05);
+}
+
+.button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-return-button {
+    display: inline-block;
+    background-color: #00A19A;
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 24px;
+    font-size: 18px;
+    border-radius: 30px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    text-align: center;
+    min-width: 150px;
+}
+
+.login-return-button:hover {
+    background-color: #008d87;
+    transform: scale(1.05);
+}
+
+.error-message p {
+    color: rgb(255, 51, 0) !important;
+    font-weight: bold !important;
+    margin-bottom: 1rem !important;
+}
+
+.field-error p {
+    color: rgb(255, 51, 0) !important;
+    font-weight: bold !important;
+    margin-bottom: 0.5rem !important;
+}
+
+/* ----------------- VETORES DO FUNDO ----------------- */
+.vetor-gosma {
+    max-width: 50vw;
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: -1;
+}
+
+.vetor-bola {
+    max-width: 50vw;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
+}
