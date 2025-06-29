@@ -13,11 +13,11 @@ Nosso objetivo é apoiar a melhoria contínua da educação por meio de dados pr
 
 ## 👥 Equipe
 
-- @andfsilva 
-- @gabrielrosalino 
-- @LorenaPiacente 
-- @acamiladia 
-- @pedrovinidma
+- [@andfsilva](https://github.com/andfsilva)  
+- [@gabrielrosalino](https://github.com/gabrielrosalino)  
+- [@LorenaPiacente](https://github.com/LorenaPiacente)  
+- [@acamiladia](https://github.com/acamiladia)  
+- [@pedrovinidma](https://github.com/pedrovinidma)
 
 ## 📌 Funcionalidades principais
 
