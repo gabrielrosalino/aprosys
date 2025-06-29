@@ -1,0 +1,25 @@
+{% extends "registration_base.html" %}
+{% load static %}
+
+{% block title %}Logout{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <img class="logo" src="{% static 'img/Logo.png' %}" alt="Logo" />
+
+    <div class="form-container">
+
+        <h2 style="color: white; text-align: center; margin-bottom: 20px;">Logout realizado com sucesso!</h2>
+
+        <p style="color: #ccc; text-align: center; margin-bottom: 30px;">
+            Você saiu da sua conta. Para entrar novamente clique no botão abaixo.
+        </p>
+
+        <div class="button">
+            <a href="{% url 'login' %}" class="login-return-button">Voltar ao login</a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

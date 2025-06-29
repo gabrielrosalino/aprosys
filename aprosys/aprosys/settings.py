@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "modules.academico.apps.AcademicoConfig",
+    "modules.academico.apps.AcademicoConfig"
 ]
 
 MIDDLEWARE = [
@@ -122,3 +122,5 @@ STATICFILES_DIRS = [BASE_DIR / 'aprosys/static']
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+LOGIN_REDIRECT_URL = "/home"

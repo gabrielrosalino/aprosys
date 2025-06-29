@@ -1,0 +1,43 @@
+{% load static %}
+
+<header class="header">
+    <button class="hamburger-menu" aria-label="Abrir menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <div class="logo">
+        <a href="{% url 'home' %}"><img src="{% static 'img/logo.png' %}" alt="Aprova System"></a>
+    </div>
+
+    <div class="user-info">
+        <form method="POST" action="{% url 'logout' %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" style="background:none; border:none; padding:0;">
+                {% if user.voluntario.foto %}
+                <img src="{{ user.voluntario.foto.url }}" alt="Foto de {{ user.voluntario.nome }}">
+                {% else %}
+                <img src="{% static 'img/user-photo.png' %}" alt="Foto do Usuário">
+                {% endif %}
+            </button>
+        </form>
+        <div class="user-details">
+            {% if user.is_superuser and user.voluntario.tipo_voluntario == "OUTRO" %}
+            {% if user.get_full_name %}
+            <span class="user-name">{{ user.get_full_name }}</span>
+            {% else %}
+            <span class="user-name">{{ user.voluntario.nome }}</span>
+            {% endif %}
+            <span class="user-role">Administrador</span>
+            {% else %}
+            {% if user.get_full_name %}
+            <span class="user-name">{{ user.get_full_name }}</span>
+            {% else %}
+            <span class="user-name">{{ user.voluntario.nome }}</span>
+            {% endif %}
+            <span class="user-role">{{ user.voluntario.get_tipo_voluntario_display }}</span>
+            {% endif %}
+        </div>
+    </div>
+</header>

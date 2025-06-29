@@ -1,0 +1,59 @@
+{% extends "registration_base.html" %}
+{% load static %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <img class="logo" src="{% static 'img/Logo.png' %}" alt="Logo" />
+
+    <div class="form-container">
+
+        {% if form.non_field_errors %}
+        <div class="error-message">
+            {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="user-details">
+                <div class="input-box">
+                    {% if form.username.errors %}
+                    <div class="field-error">
+                        {% for error in form.username.errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <input type="text" name="username" id="id_username"
+                        value="{{ form.username.value|default_if_none:'' }}" placeholder="Usuário" required>
+                </div>
+
+                <div class="input-box">
+                    {% if form.password.errors %}
+                    <div class="field-error">
+                        {% for error in form.password.errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <input type="password" name="password" id="id_password" placeholder="Senha" required>
+                </div>
+            </div>
+
+            <div class="esqueci-senha">
+                <a href="{% url 'password_reset' %}">Esqueci a senha</a>
+            </div>
+
+            <div class="button">
+                <input type="submit" value="Entrar">
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
