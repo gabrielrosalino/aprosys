@@ -6,14 +6,18 @@
 {% block content %}
 <div class="container">
 
-    <img class="logo" src="{% static 'img/Logo.png' %}" alt="Logo" />
+    <img class="logo" src="{% static 'img/logoBrancoVerde.png' %}" alt="Logo" />
 
     <div class="form-container">
 
+        <h1>Login</h1>
         {% if form.non_field_errors %}
-        <div class="error-message">
+        <div class="error-container">
             {% for error in form.non_field_errors %}
-            <p>{{ error }}</p>
+            <div class="error-icon-container">
+                <img src="{% static 'img/icon-error.png' %}" alt="Error">
+            </div>
+                <p class="error-message">{{ error }}</p>
             {% endfor %}
         </div>
         {% endif %}
@@ -21,7 +25,7 @@
         <form method="post">
             {% csrf_token %}
 
-            <div class="user-details">
+            <div class="user-form">
                 <div class="input-box">
                     {% if form.username.errors %}
                     <div class="field-error">
@@ -31,7 +35,12 @@
                     </div>
                     {% endif %}
                     <input type="text" name="username" id="id_username"
-                        value="{{ form.username.value|default_if_none:'' }}" placeholder="Usuário" required>
+                        value="{{ form.username.value|default_if_none:'' }}" placeholder="Usuário" required class="{% if form.username.errors %}input-error{% endif %}">
+                    
+                    <!-- <div class="error-container">
+                        <div class="error-icon-container"><img src="{% static 'img/icon-error.png' %}" alt="Error"></div>
+                        <p class="error-message">Usuário inválido</p>
+                    </div> -->
                 </div>
 
                 <div class="input-box">
@@ -43,10 +52,18 @@
                     </div>
                     {% endif %}
                     <input type="password" name="password" id="id_password" placeholder="Senha" required>
+                    
+                    <!-- <div class="error-container">
+                        <div class="error-icon-container"><img src="{% static 'img/icon-error.png' %}" alt="Error"></div>
+                        <p class="error-message">Senha inválida</p>
+                    </div> -->
                 </div>
+
             </div>
 
-            <div class="esqueci-senha">
+
+
+            <div class="esqueci-senha text-link">
                 <a href="{% url 'password_reset' %}">Esqueci a senha</a>
             </div>
 
@@ -54,6 +71,11 @@
                 <input type="submit" value="Entrar">
             </div>
         </form>
+        
+        <div class="cadastro text-link">
+            <p>Novo por aqui?</p>
+            <a href="{% url 'user_registration' %}">Cadastre-se</a>
+        </div>
     </div>
 </div>
 {% endblock %}

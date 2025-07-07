@@ -7,6 +7,11 @@ from . import views
 urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('', RedirectView.as_view(url='accounts/login/', permanent=False)),
+    path(
+        'user_registration/',
+        views.user_registration,
+        name='user_registration',
+    ),
     path('accounts/logout/', LogoutView.as_view(), name='logout'),
     path('home/', views.home, name='home'),
     # --------- Alunos ----------

@@ -1,3 +1,30 @@
+:root {
+    /* CORES */
+    --color-bg-dark: #003366;
+    --color-bg-medium: #0F448B;
+    --color-bg-light: #E6E6E6;
+    --color-font-dark: #b6b8b8;
+    --color-font-light: #fff;
+    --color-font-green: #00c0ca;
+    --color-btn: #00c0ca;
+    --color-btn-hover: #02b0b9;
+    --color-input-bg: #ffffff;
+    --color-input-border: #003366;
+    --color-input-border-active: #00c0ca;
+    --color-error: #ff0000;
+
+    /* FONTE */
+    --font-family: Arial, Helvetica, sans-serif;
+    --font-size-mobile: 1rem;
+    --font-size-mobile-sm: 0.875rem;
+    --font-size-mobile-lg: 1.25rem;
+    --font-size-desktop: 1.25rem;
+    --font-size-desktop-sm: 1rem;
+    --font-size-desktop-lg: 1.5rem;
+}
+
+/* ----------------- GLOBAL ----------------- */
+
 *  {
 margin: 0;
 padding: 0;
@@ -10,114 +37,16 @@ body {
     height: 100vh;
     width: 100vw;
     align-items: center;
-    background-color: #00172D;
-    font-family: Arial, Helvetica, sans-serif;
+    background-color: var(--color-bg-dark);
+    font-family: var(--font-family);
+    font-size: var(--font-size-mobile);
+    color: var(--color-font-light);
 }
 
-
-/* ----------------- FORMULÁRIO E LOGO ----------------- */
 .container {
     display: flex;
     flex-direction: column;
     align-items: center;
-}
-
-.logo {
-    margin-bottom: 20px;
-}
-
-.form-container {
-    width: 500px;
-    max-width: 90vw;
-    background: #173048;
-    padding: 30px 30px;
-    border-radius: 30px;
-    box-shadow: -20px 20px 0px rgba(0, 0, 0, 0.2);
-}
-
-.user-details {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-block-end: 10px;
-}
-
-.input-box input {
-    width: 100%;
-    font-size: 18px;
-    border-radius: 30px;
-    padding: 15px;
-    border: none;
-}
-
-.esqueci-senha {
-    display: flex;
-    justify-content: end;
-}
-
-.esqueci-senha a {
-    color: #b6b8b8;
-}
-
-.container form .button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 30px;
-}
-
-form .button input {
-    height: 45px;
-    min-width: 125px;
-    padding: 0 20px; 
-    font-size: 20px;
-    background-color: #00A19A;
-    border-radius: 30px;
-    color: #fff;
-    border: none;
-    cursor: pointer; 
-    white-space: nowrap; 
-}
-
-form .button input:hover {
-    background-color: #008d87;
-    transform: scale(1.05);
-}
-
-.button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.login-return-button {
-    display: inline-block;
-    background-color: #00A19A;
-    color: #fff;
-    text-decoration: none;
-    padding: 12px 24px;
-    font-size: 18px;
-    border-radius: 30px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    text-align: center;
-    min-width: 150px;
-}
-
-.login-return-button:hover {
-    background-color: #008d87;
-    transform: scale(1.05);
-}
-
-.error-message p {
-    color: rgb(255, 51, 0) !important;
-    font-weight: bold !important;
-    margin-bottom: 1rem !important;
-}
-
-.field-error p {
-    color: rgb(255, 51, 0) !important;
-    font-weight: bold !important;
-    margin-bottom: 0.5rem !important;
 }
 
 /* ----------------- VETORES DO FUNDO ----------------- */
@@ -135,4 +64,184 @@ form .button input:hover {
     bottom: 0;
     left: 0;
     z-index: -1;
+}
+
+/* ----------------- LINKS TEXTUAIS ----------------- */
+.text-link {
+    font-size: var(--font-size-mobile-sm);
+}
+
+
+.text-link a {
+    color: var(--color-font-green);
+    text-decoration: none;
+}
+
+.text-link a:hover {
+    color: var(--color-font-light);
+    text-decoration: underline;
+    font-weight: 700;
+    transition: 0.1s ease-in-out;
+    transform: scale(1.05);
+}
+
+/* ----------------- BOTÕES ----------------- */
+
+.container form .button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 0;
+}
+
+form .button input {
+    height: 45px;
+    width: 100%;
+    padding: 0 20px; 
+    font-size: var(--font-size-lg);
+    background-color: var(--color-btn);
+    border-radius: 30px;
+    color: var(--color-font-light);
+    border: none;
+    cursor: pointer; 
+    white-space: nowrap; 
+}
+
+form .button input:hover {
+    background-color: var(--color-btn-hover);
+    transform: scale(1.05);
+}
+
+.button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* .login-return-button {
+    display: inline-block;
+    background-color: var(--btn-color);
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 24px;
+    font-size: 18px;
+    border-radius: 30px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    text-align: center;
+    min-width: 150px;
+} */
+
+/* .login-return-button:hover {
+    background-color: rgb(0, 141, 135);
+    transform: scale(1.05);
+} */
+
+/* ----------------- CHECKBOX ----------------- */
+
+.checkbox-container label input[type="checkbox"] {
+    margin-right: 8px;
+    width: 16px;
+    height: 16px;
+    accent-color: #00A19A;
+}
+
+
+/* ----------------- CARD PRINCIPAL ----------------- */
+
+.logo {
+    width: 150px;
+    margin-bottom: 40px;
+}
+
+.form-container {
+    width: 330px;
+    max-width: 90vw;
+    background: var(--color-bg-medium);
+    padding: 40px 20px 20px;
+    border-radius: 30px;
+    box-shadow: -15px 15px 0px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+    margin-bottom: 30px;
+}
+
+/* ----------------- FORMULÁRIO ----------------- */
+
+.user-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-block-end: 10px;
+}
+
+.input-box input {
+    width: 100%;
+    border-radius: 30px;
+    padding: 15px;
+    border: var(--color-input-border) 1px solid;
+    font-size: var(--font-size-mobile);
+}
+
+.input-box input:focus-visible {
+    outline: none;
+    border: var(--color-input-border-active) 4px solid;
+}
+
+.esqueci-senha {
+    display: flex;
+    justify-content: end;
+}
+
+/* ----------------- ERROS ----------------- */
+.error-container {
+    display: flex;
+    min-height: 20px;
+    align-items: stretch; 
+    background-color: var(--color-bg-light);
+    margin-bottom: 20px;
+    border-radius: 20px;
+    color: var(--color-error);
+    font-weight: 700;
+    font-size: var(--font-size-mobile-sm);
+}
+
+.error-icon-container {
+    min-height: 100%;
+    display: flex;
+    align-self: stretch;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    border-radius: 20px 0 0 20px;
+    background-color: var(--color-error);
+}
+
+.error-icon-container img {
+    height: 21px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+}
+
+.error-message {
+    margin: 10px;
+}
+
+.input-error {
+    outline: none;
+    border: var(--color-error) 4px solid;
+}
+
+/* ----------------- CADASTRO ----------------- */
+.cadastro {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+/* ----------------- ACEITE DE CADASTRO ----------------- */
+
+.permission-container {
+    margin-top: 20px;
 }

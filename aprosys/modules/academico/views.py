@@ -36,6 +36,10 @@ def role_required(allowed_roles):
     return decorator
 
 
+def user_registration(request):
+    return render(
+        request, 'registration/user_registration.html')
+
 @login_required
 def home(request):
     return render(request, 'academico/home.html')
