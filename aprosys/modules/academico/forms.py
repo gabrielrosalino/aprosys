@@ -1,7 +1,53 @@
 # cadastros/forms.py
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
 
-from .models import Aluno, PeriodoLetivo
+from .models import Aluno, CustomUser, PeriodoLetivo
+
+
+class CustomUserForm(UserCreationForm):
+    nome = forms.CharField(
+        label='Nome',
+        max_length=150,
+        required=True,
+        widget=forms.TextInput(attrs={'placeholder': 'Nome'}),
+    )
+    email = forms.EmailField(
+        label='Email',
+        required=True,
+        widget=forms.EmailInput(attrs={'placeholder': 'Email'}),
+    )
+    contato = forms.CharField(
+        label='Contato',
+        required=True,
+        widget=forms.TextInput(attrs={'placeholder': 'Contato'}),
+    )
+    password1 = forms.CharField(
+        label='Senha',
+        widget=forms.PasswordInput(attrs={'placeholder': 'Senha'}),
+        strip=False,
+    )
+    password2 = forms.CharField(
+        label='Confirme a senha',
+        widget=forms.PasswordInput(
+            attrs={'placeholder': 'Confirmar Senha'}
+        ),
+        strip=False,
+    )
+
+    class Meta:
+        model = CustomUser
+        fields = ['nome', 'email', 'contato', 'password1', 'password2']
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.nome = self.cleaned_data['nome']
+        user.email = self.cleaned_data['email']
+        user.contato = self.cleaned_data['contato']
+        user.username = user.email
+        if commit:
+            user.save()
+        return user
 
 
 class AlunoForm(forms.ModelForm):

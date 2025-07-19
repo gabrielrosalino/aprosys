@@ -1,6 +1,14 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
+
+
+class CustomUser(AbstractUser):
+    nome = models.CharField(max_length=150, null=False, blank=False)
+    contato = models.CharField(max_length=11, null=True, blank=True)
+
+    def __str__(self):
+        return self.email
 
 
 class Curso(models.Model):
@@ -144,7 +152,7 @@ class TurmaDisciplina(models.Model):
 
 class Voluntario(models.Model):
     user = models.OneToOneField(
-        User,
+        CustomUser,
         on_delete=models.CASCADE,
         primary_key=True,
         related_name='voluntario',

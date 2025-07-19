@@ -1,11 +1,12 @@
 from functools import wraps
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect, render
 
-from .forms import AlunoForm, PeriodoLetivoForm
+from .forms import AlunoForm, CustomUserForm, PeriodoLetivoForm
 from .models import (
     Aluno,
     Disciplina,
@@ -37,7 +38,17 @@ def role_required(allowed_roles):
 
 
 def user_registration(request):
-    return render(request, 'registration/user_registration.html')
+    if request.method == 'POST':
+        form = CustomUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Cadastro realizado com sucesso!')
+            return redirect('login')
+    else:
+        form = CustomUserForm()
+    return render(
+        request, 'registration/user_registration.html', {'form': form}
+    )
 
 
 @login_required

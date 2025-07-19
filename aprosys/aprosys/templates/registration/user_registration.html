@@ -1,5 +1,6 @@
 {% extends "registration_base.html" %}
 {% load static %}
+{% load widget_tweaks %}
 
 {% block title %}Cadastro{% endblock %}
 
@@ -9,15 +10,15 @@
     <img class="logo" src="{% static 'img/logoBrancoVerde.png' %}" alt="Logo" />
 
     <div class="form-container">
-
         <h1>Cadastre-se</h1>
+
         {% if form.non_field_errors %}
         <div class="error-container">
             {% for error in form.non_field_errors %}
             <div class="error-icon-container">
                 <img src="{% static 'img/icon-error.png' %}" alt="Error">
             </div>
-                <p class="error-message">{{ error }}</p>
+            <p class="error-message">{{ error }}</p>
             {% endfor %}
         </div>
         {% endif %}
@@ -26,24 +27,30 @@
             {% csrf_token %}
 
             <div class="user-form">
+
                 <div class="input-box">
-                    <input type="text" name="nome" id="nome" placeholder="Nome" required>                    
-                </div>
-                
-                <div class="input-box">
-                    <input type="email" name="email" id="email" placeholder="Email" required>
-                </div>
-                
-                <div class="input-box">
-                    <input type="tel" name="contato" id="contato" placeholder="Contato" required pattern="\d{10,11}">
+                    {{ form.nome.errors }}
+                    {{ form.nome|add_class:"input" }}
                 </div>
 
                 <div class="input-box">
-                    <input type="password" name="senha" id="senha" placeholder="Senha" required>
+                    {{ form.email.errors }}
+                    {{ form.email|add_class:"input" }}
                 </div>
 
                 <div class="input-box">
-                    <input type="password" name="confirmar_senha" id="confirmar_senha" placeholder="Confirmar Senha" required>
+                    {{ form.contato.errors }}
+                    {{ form.contato|add_class:"input" }}
+                </div>
+
+                <div class="input-box">
+                    {{ form.password1.errors }}
+                    {{ form.password1|add_class:"input" }}
+                </div>
+
+                <div class="input-box">
+                    {{ form.password2.errors }}
+                    {{ form.password2|add_class:"input" }}
                 </div>
             </div>
 
@@ -57,15 +64,9 @@
             </div>
         </form>
 
-        
-        
         <div class="cadastro text-link">
             <p>Já possui cadastro? <a href="{% url 'login' %}">Logue</a> no sistema</p>
         </div>
     </div>
 </div>
 {% endblock %}
-
-
-
-
