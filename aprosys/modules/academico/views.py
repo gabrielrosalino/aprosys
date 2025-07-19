@@ -37,8 +37,8 @@ def role_required(allowed_roles):
 
 
 def user_registration(request):
-    return render(
-        request, 'registration/user_registration.html')
+    return render(request, 'registration/user_registration.html')
+
 
 @login_required
 def home(request):

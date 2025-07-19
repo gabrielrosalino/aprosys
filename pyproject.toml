@@ -25,7 +25,7 @@ taskipy = "^1.14.1"
 
 [tool.ruff]
 line-length = 79
-extend-exclude = ['migrations', 'settings.py']
+extend-exclude = ['migrations', 'settings.py', 'manage.py']
 
 [tool.ruff.lint]
 preview = true
