@@ -195,6 +195,23 @@ def cadastrar_periodo(request):
         request, 'academico/periodos/cadastrar_periodo.html', {'form': form}
     )
 
+# --------- Cursos ----------
+@role_required(['COORDENADOR'])
+@login_required
+def cadastrar_curso(request):
+    return render(
+        request, 'academico/cursos/cadastrar_curso.html'
+    )
+
+@role_required(['COORDENADOR'])
+@login_required
+def pesquisar_curso(request):
+    return render(
+        request, 'academico/cursos/pesquisar_curso.html'
+    )
+
+
+
 
 @role_required(['COORDENADOR'])
 @login_required

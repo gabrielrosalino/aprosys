@@ -69,4 +69,15 @@ urlpatterns = [
         views.pesquisar_voluntario,
         name='pesquisar_voluntario',
     ),
+    # --------- Cursos ----------
+    path(
+        'academico/cursos/cadastrar/',
+        views.cadastrar_curso,
+        name='cadastrar_curso',
+    ),
+    path(
+        'academico/cursos/pesquisar/',
+        views.pesquisar_curso,
+        name='pesquisar_curso',
+    ),
 ]

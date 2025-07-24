@@ -49,6 +49,20 @@
             </li>
         </ul>
     </li>
+    
+    <li>
+        <a class="menu-title" href="#">Cursos</a>
+        <ul class="submenu">
+            <li class="{% if request.resolver_match.url_name == 'cadastrar_curso' %}link-ativo{% endif %}">
+                <a href="{% url 'cadastrar_curso' %}">Cadastrar Curso</a>
+            </li>
+            <li class="{% if request.resolver_match.url_name == 'pesquisar_curso' %}link-ativo{% endif %}">
+                <a href="{% url 'pesquisar_curso' %}">Pesquisar Curso</a>
+            </li>
+        </ul>
+    </li>
+
+
     {% endif %}
 
     <li>
