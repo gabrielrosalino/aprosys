@@ -6,7 +6,7 @@ from django.db.models import Q
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect, render
 
-from .forms import AlunoForm, CustomUserForm, PeriodoLetivoForm
+from .forms import AlunoForm, CustomUserForm, PeriodoLetivoForm, DisciplinaForm
 from .models import (
     Aluno,
     Disciplina,
@@ -123,11 +123,24 @@ def matricular_aluno(request):
 @role_required(['COORDENADOR'])
 @login_required
 def cadastrar_disciplina(request):
+
+    if request.method == 'POST':
+        form = DisciplinaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('cadastrar_disciplina')
+    else:
+        form = DisciplinaForm()
+        
     return render(
         request,
         'academico/disciplinas/cadastrar_disciplina.html',
-        {'active_menu': 'disciplina'},
+        {
+            'form': form,
+            'active_menu': 'disciplina',
+        }
     )
+
 
 
 @login_required

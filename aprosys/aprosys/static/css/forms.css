@@ -28,6 +28,14 @@ fieldset {
     font-family: Arial, Helvetica, sans-serif;
 }
 
+.form-group textarea {
+    padding: 10px;
+    border: 1PX solid #c4c4c4;
+    border-radius: 20px;
+    font-size: 1em;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
 .form-group input, select {
     padding: 10px;
     border: 1PX solid #c4c4c4;

@@ -9,4 +9,55 @@
     <h3 class="report-subtitle">Cadastrar</h3>
     <h1 class="report-title">Disciplina</h1>
   </div>
+
+  {% if form.errors %}
+    <div class="alert alert-danger">
+      <ul>
+        {% for field in form %}
+          {% for err in field.errors %}
+            <li><strong>{{ field.label }}:</strong> {{ err }}</li>
+          {% endfor %}
+        {% endfor %}
+        {% for err in form.non_field_errors %}
+          <li>{{ err }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <form method="post" action="{% url 'cadastrar_disciplina' %}" id="disciplina-form">
+    {% csrf_token %}
+
+    <fieldset class="chart-container">
+      <div class="form-fields-wrapper">
+
+        <!-- Campo nome oculto -->
+        <div class="form-group field-half" >
+          {{ form.nome.label_tag }}
+          {{ form.nome }}
+        </div>
+
+        <div class="form-group field-half">
+          {{ form.area_conhecimento.label_tag }}
+          {{ form.area_conhecimento }}
+        </div>
+
+        <div class="form-group field-half">
+          {{ form.status.label_tag }}
+          {{ form.status }}
+        </div>
+
+        <div class="form-group field-full">
+          {{ form.curriculo.label_tag }}
+          {{ form.curriculo }}
+        </div>
+
+      </div>
+    </fieldset>
+
+    <div class="btn_wrapper">
+      <button type="submit" class="btn btn-save">Cadastrar</button>
+      <button type="reset" class="btn btn-cancel">Cancelar</button>
+    </div>
+  </form>
 {% endblock %}

@@ -2,7 +2,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
-from .models import Aluno, CustomUser, PeriodoLetivo
+from .models import Aluno, CustomUser, PeriodoLetivo, Disciplina
 
 
 class CustomUserForm(UserCreationForm):
@@ -100,3 +100,13 @@ class PeriodoLetivoForm(forms.ModelForm):
         widgets = {
             'nome': forms.HiddenInput(),
         }
+
+class DisciplinaForm(forms.ModelForm):
+    class Meta:
+        model = Disciplina
+        fields = [
+            'nome',
+            'area_conhecimento',
+            'curriculo',
+            'status',
+        ]
