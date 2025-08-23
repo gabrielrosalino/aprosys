@@ -4,8 +4,46 @@
         {{ widget }}
     </div>
     {% if add_url %}
-    <a href="{{ add_url }}" class="add-another" id="add_id_{{ name }}" title="Adicionar novo curso" onclick="return showAddAnotherPopup(this);">
+    <a href="{{ add_url }}"
+       class="add-another"
+       id="add_id_{{ name }}"
+       title="Adicionar novo"
+       onclick="return showAddAnotherPopup(this);">
         <img src="{% static 'img/icon.png' %}" alt="+" class="add-icon">
     </a>
     {% endif %}
 </div>
+
+<script>
+function showAddAnotherPopup(triggeringLink) {
+    var name = triggeringLink.id.replace(/^add_id_/, '');
+    var href = triggeringLink.href + '?field_name=' + name;
+
+    var win = window.open(href, '_blank');
+    
+    function updateSelect(event) {
+        
+        if (event.data && event.data.type === 'add_related' && event.data.name === name) {
+            var select = document.getElementById('id_' + name);
+            if (select) {
+
+                var option = new Option(event.data.text, event.data.value, true, true);
+                select.add(option);
+                select.dispatchEvent(new Event('change'));
+
+                window.removeEventListener('message', updateSelect);
+            } else {
+                console.log('Select NÃO encontrado para id: ' + 'id_' + name);
+            }
+        }
+    }
+
+    window.addEventListener('message', updateSelect);
+    
+    setTimeout(function() {
+        window.removeEventListener('message', updateSelect);
+    }, 30000);
+    
+    return false;
+}
+</script>

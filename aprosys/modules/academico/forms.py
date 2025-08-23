@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse
 
-from .models import Aluno, CustomUser, Disciplina, PeriodoLetivo
+from .models import Aluno, Curso, CustomUser, Disciplina, PeriodoLetivo
 from .widgets import CustomRelatedFieldWidgetWrapper
 
 
@@ -87,14 +87,20 @@ class AlunoForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        rel = Aluno._meta.get_field('curso_interesse').remote_field
-        add_url = reverse('cadastrar_curso')
+        for field in self.fields.values():
+            if not isinstance(field.widget, forms.Select):
+                field.widget.attrs.update({'class': 'form-control'})
 
+        rel = Aluno._meta.get_field('curso_interesse').remote_field
+        add_url = (
+            reverse('cadastrar_curso')
+        )
         self.fields[
             'curso_interesse'
         ].widget = CustomRelatedFieldWidgetWrapper(
             self.fields['curso_interesse'].widget, rel, add_url=add_url
         )
+        self.fields['curso_interesse'].required = False
 
 
 class PeriodoLetivoForm(forms.ModelForm):
@@ -121,4 +127,12 @@ class DisciplinaForm(forms.ModelForm):
             'area_conhecimento',
             'curriculo',
             'status',
+        ]
+
+
+class CursoForm(forms.ModelForm):
+    class Meta:
+        model = Curso
+        fields = [
+            'nome',
         ]

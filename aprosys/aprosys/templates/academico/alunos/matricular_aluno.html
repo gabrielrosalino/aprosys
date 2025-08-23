@@ -171,4 +171,22 @@
       <button type="reset"  class="btn btn-cancel">Cancelar</button>
     </div>
   </form>
+
+<script>
+function updateSelect(event) {
+    console.log('Mensagem recebida:', event.data);
+    
+    if (event.data && event.data.type === 'add_related' && event.data.name === name) {
+        console.log('Dados válidos recebidos:', event.data);
+        
+        var select = document.getElementById('id_' + name);
+        if (select) {
+            console.log('Select encontrado:', select);
+            // ... resto do código
+        } else {
+            console.log('Select não encontrado para id: ' + 'id_' + name);
+        }
+    }
+};
+</script>
 {% endblock %}

@@ -1,0 +1,35 @@
+.related-widget-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.related-widget-select {
+    flex-grow: 1;
+}
+
+.related-widget-wrapper select {
+    width: 100%;
+}
+
+.add-another {
+    display: inline-block;
+    padding: 6px 10px;
+    background: #5cb85c;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.add-another:hover {
+    background: #4cae4c;
+    color: white;
+    text-decoration: none;
+}
+
+.add-another i {
+    margin-right: 4px;
+}

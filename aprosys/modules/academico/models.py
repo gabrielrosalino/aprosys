@@ -264,6 +264,15 @@ class Aluno(models.Model):
         ('ensino_superior_completo', 'Ensino Superior Completo'),
     )
 
+    # Institucional
+    curso_interesse = models.ForeignKey(
+        Curso,
+        on_delete=models.SET_NULL,
+        verbose_name='Curso de Interesse',
+        null=True,
+        blank=True,
+    )
+
     # Dados pessoais
     nome = models.CharField('Nome completo', max_length=100)
     email = models.EmailField('E-mail', unique=True)
@@ -315,13 +324,6 @@ class Aluno(models.Model):
     cep = models.CharField('CEP', max_length=9, blank=True)
 
     # Institucionais
-    curso_interesse = models.ForeignKey(
-        'Curso',
-        verbose_name='Curso de Interesse',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=False,
-    )
     status = models.IntegerField('Status', choices=STATUS_CHOICES, default=1)
     periodo_interesse = models.IntegerField(
         'Período de Interesse', choices=PERIODO_INTERESSE, default=0

@@ -1,17 +1,17 @@
 {% extends 'logged_base.html' %}
 {% load static %}
 
-{% block title %}Aprova System | Pesquisar Curso{% endblock %}
+{% block title %}Aprova System | Pesquisar Curso {% endblock %}
 
 {% block content %}
 <div class="report-header">
     <h3 class="report-subtitle">Pesquisar</h3>
     <h1 class="report-title">Curso</h1>
 </div>
-<!-- 
+
 <form
     id="search-form"
-    action="{% url 'pesquisar_turma' %}" {# Aponta para a URL de pesquisa de turma #}
+    action="{% url 'pesquisar_curso' %}"
     method="get"
     class="search-container search-container-table"
 >
@@ -19,7 +19,7 @@
         id="search-input"
         type="text"
         name="q"
-        placeholder="Pesquise por uma turma"
+        placeholder="Pesquise por um curso"
         value="{{ q|urlencode }}"
         autocomplete="off"
     >
@@ -35,58 +35,23 @@
     <thead>
         <tr>
             <th class="sortable" data-field="nome">
-                <span>Nome</span>
+                <span>Curso</span>
                 {% if order == 'nome' %}
-                    <span>{% if dir == 'asc' %}▲{% else %}▼{% endif %}</span>
-                {% endif %}
-            </th>
-            <th class="sortable" data-field="capacidade">
-                <span>Capacidade</span>
-                {% if order == 'capacidade' %}
-                    <span>{% if dir == 'asc' %}▲{% else %}▼{% endif %}</span>
-                {% endif %}
-            </th>
-            <th class="sortable" data-field="data_inicio">
-                <span>Início</span>
-                {% if order == 'data_inicio' %}
-                    <span>{% if dir == 'asc' %}▲{% else %}▼{% endif %}</span>
-                {% endif %}
-            </th>
-            <th class="sortable" data-field="data_fim">
-                <span>Fim</span>
-                {% if order == 'data_fim' %}
-                    <span>{% if dir == 'asc' %}▲{% else %}▼{% endif %}</span>
-                {% endif %}
-            </th>
-            <th class="sortable" data-field="status">
-                <span>Status</span>
-                {% if order == 'status' %}
-                    <span>{% if dir == 'asc' %}▲{% else %}▼{% endif %}</span>
-                {% endif %}
-            </th>
-            <th class="sortable" data-field="periodo_letivo">
-                <span>Período Letivo</span>
-                {% if order == 'periodo_letivo' %}
                     <span>{% if dir == 'asc' %}▲{% else %}▼{% endif %}</span>
                 {% endif %}
             </th>
         </tr>
     </thead>
     <tbody>
-        {% if turmas %}
-            {% for turma in turmas %}
+        {% if cursos %}
+            {% for curso in cursos %}
                 <tr>
-                    <td>{{ turma.nome }}</td>
-                    <td>{{ turma.capacidade }}</td>
-                    <td>{{ turma.data_inicio|date:"d/m/Y" }}</td> {# Formata a data #}
-                    <td>{{ turma.data_fim|date:"d/m/Y" }}</td>   {# Formata a data #}
-                    <td>{{ turma.get_status_display }}</td>      {# Usa o display para o status #}
-                    <td>{{ turma.periodo_letivo.nome }}</td>     {# Acessa o nome do período letivo #}
+                    <td>{{ curso.nome }}</td>
                 </tr>
             {% endfor %}
         {% else %}
             <tr>
-                <td colspan="6">Nenhuma turma encontrada.</td> {# Colspan ajustado #}
+                <td colspan="1">Nenhum curso encontrado.</td>
             </tr>
         {% endif %}
     </tbody>
@@ -129,5 +94,5 @@
         });
       });
     });
-</script> -->
+</script>
 {% endblock %}

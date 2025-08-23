@@ -3,12 +3,19 @@ from functools import wraps
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.http import HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import redirect, render
 
-from .forms import AlunoForm, CustomUserForm, DisciplinaForm, PeriodoLetivoForm
+from .forms import (
+    AlunoForm,
+    CursoForm,
+    CustomUserForm,
+    DisciplinaForm,
+    PeriodoLetivoForm,
+)
 from .models import (
     Aluno,
+    Curso,
     Disciplina,
     PeriodoLetivo,
     Turma,
@@ -123,7 +130,6 @@ def matricular_aluno(request):
 @role_required(['COORDENADOR'])
 @login_required
 def cadastrar_disciplina(request):
-
     if request.method == 'POST':
         form = DisciplinaForm(request.POST)
         if form.is_valid():
@@ -137,7 +143,7 @@ def cadastrar_disciplina(request):
         {
             'form': form,
             'active_menu': 'disciplina',
-        }
+        },
     )
 
 
@@ -211,16 +217,85 @@ def cadastrar_periodo(request):
 @role_required(['COORDENADOR'])
 @login_required
 def cadastrar_curso(request):
+    field_name = request.GET.get('field_name') or request.POST.get(
+        'field_name'
+    )
+
+    if request.method == 'POST':
+        form = CursoForm(request.POST)
+        if form.is_valid():
+            curso = form.save()
+
+            if field_name:
+                return HttpResponse(f"""
+                    <script>
+                        if (window.opener) {{
+                            window.opener.postMessage({{
+                                type: 'add_related',
+                                name: '{field_name}',
+                                value: '{curso.id_curso}',
+                                text: '{curso.nome.replace("'", "\\'")}'
+                            }}, '*');
+                        }}
+                        setTimeout(function() {{
+                            window.close();
+                        }}, 100);
+                    </script>
+                    <div style='padding: 20px; text-align: center;'>
+                        <h3>Curso cadastrado com sucesso!</h3>
+                        <p>Esta aba será fechada automaticamente.</p>
+                    </div>
+                """)
+            else:
+                return redirect('pesquisar_curso')
+        else:
+            return render(
+                request,
+                'academico/cursos/cadastrar_curso.html',
+                {'form': form, 'field_name': field_name},
+            )
+
+    else:
+        form = CursoForm()
+        print(f'DEBUG - GET request, field_name: {field_name}')
+
     return render(
-        request, 'academico/cursos/cadastrar_curso.html'
+        request,
+        'academico/cursos/cadastrar_curso.html',
+        {'form': form, 'field_name': field_name},
     )
 
 
-@role_required(['COORDENADOR'])
 @login_required
 def pesquisar_curso(request):
+    q = request.GET.get('q', '').strip()
+    cursos = Curso.objects.all()
+
+    if q:
+        cursos = cursos.filter(Q(nome__icontains=q))
+
+    allowed_fields = {
+        'nome': 'nome',
+    }
+    order = request.GET.get('order', 'nome')
+    direction = request.GET.get('dir', 'asc')
+
+    if order not in allowed_fields:
+        order = 'nome'
+
+    prefix = '' if direction == 'asc' else '-'
+    cursos = cursos.order_by(f'{prefix}{allowed_fields[order]}')
+
     return render(
-        request, 'academico/cursos/pesquisar_curso.html'
+        request,
+        'academico/cursos/pesquisar_curso.html',
+        {
+            'cursos': cursos,
+            'q': q,
+            'order': order,
+            'dir': direction,
+            'active_menu': 'cursos',
+        },
     )
 
 
