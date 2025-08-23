@@ -1,0 +1,11 @@
+{% load static %}
+<div class="related-widget-wrapper">
+    <div class="related-widget-select">
+        {{ widget }}
+    </div>
+    {% if add_url %}
+    <a href="{{ add_url }}" class="add-another" id="add_id_{{ name }}" title="Adicionar novo curso" onclick="return showAddAnotherPopup(this);">
+        <img src="{% static 'img/icon.png' %}" alt="+" class="add-icon">
+    </a>
+    {% endif %}
+</div>

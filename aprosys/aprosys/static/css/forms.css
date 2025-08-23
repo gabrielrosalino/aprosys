@@ -140,3 +140,20 @@ fieldset {
         display: grid;
     }
 }
+
+/* Estilo para o wrapper do widget de relacionamento */
+.related-widget-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.related-widget-select {
+    flex-grow: 1;
+}
+
+/* Estilo para o botão de adicionar */
+.add-another {
+    display: inline-flex;
+    text-decoration: none;
+}

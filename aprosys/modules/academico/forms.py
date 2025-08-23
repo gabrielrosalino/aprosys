@@ -1,8 +1,9 @@
-# cadastros/forms.py
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from django.urls import reverse
 
-from .models import Aluno, CustomUser, PeriodoLetivo, Disciplina
+from .models import Aluno, CustomUser, Disciplina, PeriodoLetivo
+from .widgets import CustomRelatedFieldWidgetWrapper
 
 
 class CustomUserForm(UserCreationForm):
@@ -29,9 +30,7 @@ class CustomUserForm(UserCreationForm):
     )
     password2 = forms.CharField(
         label='Confirme a senha',
-        widget=forms.PasswordInput(
-            attrs={'placeholder': 'Confirmar Senha'}
-        ),
+        widget=forms.PasswordInput(attrs={'placeholder': 'Confirmar Senha'}),
         strip=False,
     )
 
@@ -55,7 +54,7 @@ class AlunoForm(forms.ModelForm):
         label='Status',
         choices=Aluno.STATUS_CHOICES,
         widget=forms.Select(attrs={'class': 'form-control'}),
-        initial=1,  # * 1 = “Ativo” por default
+        initial=1,
     )
 
     class Meta:
@@ -85,6 +84,18 @@ class AlunoForm(forms.ModelForm):
             'periodo_interesse',
         ]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        rel = Aluno._meta.get_field('curso_interesse').remote_field
+        add_url = reverse('cadastrar_curso')
+
+        self.fields[
+            'curso_interesse'
+        ].widget = CustomRelatedFieldWidgetWrapper(
+            self.fields['curso_interesse'].widget, rel, add_url=add_url
+        )
+
 
 class PeriodoLetivoForm(forms.ModelForm):
     class Meta:
@@ -100,6 +111,7 @@ class PeriodoLetivoForm(forms.ModelForm):
         widgets = {
             'nome': forms.HiddenInput(),
         }
+
 
 class DisciplinaForm(forms.ModelForm):
     class Meta:
