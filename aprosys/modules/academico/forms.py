@@ -1,8 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse
-
-from .models import Aluno, Curso, CustomUser, Disciplina, PeriodoLetivo
+from django.forms import ModelForm, DateInput
+from .models import Aluno, Curso, CustomUser, Disciplina, PeriodoLetivo, Turma
 from .widgets import CustomRelatedFieldWidgetWrapper
 
 
@@ -136,3 +136,21 @@ class CursoForm(forms.ModelForm):
         fields = [
             'nome',
         ]
+
+
+class TurmaForm(ModelForm):
+    class Meta:
+        model = Turma
+        fields = [
+            'nome',
+            'capacidade',
+            'data_inicio',
+            'data_fim',
+            'status',
+            'periodo_letivo',
+            'curso',
+        ]
+        widgets = {
+            'data_inicio': DateInput(attrs={'type': 'date'}),
+            'data_fim': DateInput(attrs={'type': 'date'}),
+        }

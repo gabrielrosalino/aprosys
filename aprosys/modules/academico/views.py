@@ -12,6 +12,7 @@ from .forms import (
     CustomUserForm,
     DisciplinaForm,
     PeriodoLetivoForm,
+    TurmaForm,
 )
 from .models import (
     Aluno,
@@ -347,11 +348,21 @@ def pesquisar_periodo(request):
 @role_required(['COORDENADOR'])
 @login_required
 def cadastrar_turma(request):
+    if request.method == 'POST':
+        form = TurmaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Turma cadastrada com sucesso!')
+            return redirect('pesquisar_turma')
+    else:
+        form = TurmaForm()
+
     return render(
         request,
         'academico/turmas/cadastrar_turma.html',
-        {'active_menu': 'turmas'},
+        {'form': form, 'active_menu': 'turmas'},
     )
+
 
 
 @login_required

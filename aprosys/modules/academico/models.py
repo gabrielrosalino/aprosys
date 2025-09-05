@@ -64,6 +64,13 @@ class Turma(models.Model):
         null=True,
         blank=False,
     )
+    curso = models.ForeignKey(
+        Curso,
+        on_delete=models.CASCADE,
+        verbose_name='Curso',
+        null=True,
+        blank=False,
+    )
 
     def __str__(self):
         return self.nome
