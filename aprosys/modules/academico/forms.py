@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse
 from django.forms import ModelForm, DateInput
-from .models import Aluno, Curso, CustomUser, Disciplina, PeriodoLetivo, Turma
+from .models import Aluno, Curso, CustomUser, Disciplina, PeriodoLetivo, Turma, Voluntario
 from .widgets import CustomRelatedFieldWidgetWrapper
 
 
@@ -154,3 +154,27 @@ class TurmaForm(ModelForm):
             'data_inicio': DateInput(attrs={'type': 'date'}),
             'data_fim': DateInput(attrs={'type': 'date'}),
         }
+
+class VoluntarioForm(forms.ModelForm):
+    class Meta:
+        model = Voluntario
+        fields = [
+            'user',
+            'nome',
+            'nascimento',
+            'cpf',
+            'email',
+            'telefone_contato',
+            'rua',
+            'numero',
+            'complemento',
+            'bairro',
+            'cidade',
+            'estado',
+            'cep',
+            'descricao_atividades',
+            'foto',
+            'status_processo_voluntario',
+            'tipo_voluntario',
+            'disciplina',
+        ]

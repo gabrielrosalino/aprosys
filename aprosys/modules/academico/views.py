@@ -13,6 +13,7 @@ from .forms import (
     DisciplinaForm,
     PeriodoLetivoForm,
     TurmaForm,
+    VoluntarioForm,
 )
 from .models import (
     Aluno,
@@ -422,10 +423,19 @@ def pesquisar_turma(request):
 @role_required(['COORDENADOR'])
 @login_required
 def cadastrar_voluntario(request):
+    if request.method == 'POST':
+        form = VoluntarioForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Voluntário cadastrado com sucesso!')
+            return redirect('pesquisar_voluntario')
+    else:
+        form = VoluntarioForm()
+
     return render(
         request,
         'academico/voluntarios/cadastrar_voluntario.html',
-        {'active_menu': 'voluntarios'},
+        {'form': form, 'active_menu': 'voluntarios'},
     )
 
 
