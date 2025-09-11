@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseForbidden
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 
 from .forms import (
     AlunoForm,
@@ -127,6 +127,27 @@ def matricular_aluno(request):
         {'form': form, 'active_menu': 'alunos'},
     )
 
+# Anderson
+@role_required(['COORDENADOR'])
+@login_required
+def editar_aluno(request, aluno_id):
+    aluno = get_object_or_404(Aluno, pk=aluno_id)
+
+    if request.method == 'POST':
+        form = AlunoForm(request.POST, instance=aluno)
+        if form.is_valid():
+            form.save() 
+            messages.success(request, 'Aluno atualizado com sucesso!')
+            return redirect('pesquisar_aluno')  
+    else:
+        form = AlunoForm(instance=aluno)
+
+    return render(
+        request,
+        'academico/alunos/editar_aluno.html',
+        {'form': form, 'active_menu': 'alunos'},
+    )
+# Anderson
 
 # --------- Disciplina ----------
 @role_required(['COORDENADOR'])

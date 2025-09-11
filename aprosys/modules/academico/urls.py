@@ -25,6 +25,14 @@ urlpatterns = [
         views.matricular_aluno,
         name='matricular_aluno',
     ),
+    # Anderson
+    path (
+        'academico/alunos/editar/<int:aluno_id>/',
+        views.editar_aluno,
+        name='editar_aluno',
+    ),
+    # Anderson
+
     # --------- Disciplina ----------
     path(
         'academico/disciplinas/cadastrar/',

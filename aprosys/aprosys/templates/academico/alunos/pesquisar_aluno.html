@@ -46,6 +46,9 @@
             <span>{% if dir == 'asc' %}▲{% else %}▼{% endif %}</span>
           {% endif %}
         </th>
+        <th data-field="editar">
+          <span>Editar</span>
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -54,11 +57,16 @@
           <tr>
             <td>{{ aluno.nome }}</td>
             <td>{{ aluno.get_status_display }}</td>
+            <!-- Anderson -->
+            <td>
+              <a href="{% url 'editar_aluno' aluno.id %}">Editar</a>
+            </td>
+            <!--  -->
           </tr>
         {% endfor %}
       {% else %}
         <tr>
-          <td colspan="2">Nenhum aluno encontrado.</td>
+          <td colspan="2">Nenhum aluno encontrado.</td> 
         </tr>
       {% endif %}
     </tbody>
