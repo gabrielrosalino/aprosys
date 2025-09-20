@@ -69,6 +69,14 @@ class AlunoForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
     )
 
+
+    curso_interesse = forms.ModelMultipleChoiceField(
+        queryset=Curso.objects.all(),
+        label='Cursos de Interesse',
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+    )
+
     class Meta:
         model = Aluno
         fields = [
@@ -103,16 +111,6 @@ class AlunoForm(forms.ModelForm):
             if not isinstance(field.widget, forms.Select):
                 field.widget.attrs.update({'class': 'form-control'})
 
-        rel = Aluno._meta.get_field('curso_interesse').remote_field
-        add_url = (
-            reverse('cadastrar_curso')
-        )
-        self.fields[
-            'curso_interesse'
-        ].widget = CustomRelatedFieldWidgetWrapper(
-            self.fields['curso_interesse'].widget, rel, add_url=add_url
-        )
-        self.fields['curso_interesse'].required = False
 
 
 class PeriodoLetivoForm(forms.ModelForm):

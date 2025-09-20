@@ -267,11 +267,9 @@ class Aluno(models.Model):
     )
 
     # Institucional
-    curso_interesse = models.ForeignKey(
+    curso_interesse = models.ManyToManyField(
         Curso,
-        on_delete=models.SET_NULL,
-        verbose_name='Curso de Interesse',
-        null=True,
+        verbose_name='Cursos de Interesse',
         blank=True,
     )
 
