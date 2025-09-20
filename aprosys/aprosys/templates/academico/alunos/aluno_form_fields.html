@@ -109,7 +109,15 @@
     </div>
     <div class="form-group field-half">
       {{ form.periodo_interesse.label_tag }}
-      {{ form.periodo_interesse }}
-    </div>
+      <div class="checkbox-group">
+        {% for choice in form.periodo_interesse %}
+          <div class="form-check form-check-inline">
+            {{ choice.tag }}
+            <label class="form-check-label" for="{{ choice.id_for_label }}">
+              {{ choice.choice_label }}
+            </label>
+          </div>
+        {% endfor %}
+      </div>
   </div>
 </fieldset>

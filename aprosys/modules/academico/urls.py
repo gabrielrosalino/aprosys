@@ -20,11 +20,7 @@ urlpatterns = [
         views.pesquisar_aluno,
         name='pesquisar_aluno',
     ),
-    path(
-        'academico/alunos/matricular/',
-        views.aluno_form_view,
-        name='matricular_aluno',
-    ),
+    path('academico/alunos/cadastrar/', views.aluno_form_view, name='cadastrar_aluno'),
     path(
         'academico/alunos/editar/<int:aluno_id>/',
         views.aluno_form_view,

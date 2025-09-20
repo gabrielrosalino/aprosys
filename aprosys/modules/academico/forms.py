@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse
 from django.forms import ModelForm, DateInput
-from .models import Aluno, Curso, CustomUser, Disciplina, PeriodoLetivo, Turma, Voluntario
+from .models import Aluno, Curso, CustomUser, Disciplina, PeriodoLetivo, Turma, Voluntario 
 from .widgets import CustomRelatedFieldWidgetWrapper
 
 
@@ -55,6 +55,18 @@ class AlunoForm(forms.ModelForm):
         choices=Aluno.STATUS_CHOICES,
         widget=forms.Select(attrs={'class': 'form-control'}),
         initial=1,
+    )
+
+    PERIODO_INTERESSE = (
+        (0, 'Matutino'),
+        (1, 'Vespertino'),
+        (2, 'Noturno'),
+    )
+    
+    periodo_interesse = forms.MultipleChoiceField(
+        label='Período de Interesse',
+        choices=PERIODO_INTERESSE,
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
     )
 
     class Meta:

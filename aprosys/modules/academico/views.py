@@ -109,6 +109,8 @@ def pesquisar_aluno(request):
 
     return render(request, 'academico/alunos/pesquisar_aluno.html', context)
 
+@login_required
+@role_required(['COORDENADOR'])
 def aluno_form_view(request, aluno_id=None):
     """
     View unificada para Matricular, Editar e Ver Detalhes de um Aluno.
@@ -116,15 +118,15 @@ def aluno_form_view(request, aluno_id=None):
     # 1. Determina o modo (matricular, editar, detalhes) a partir do nome da URL
     modo = request.resolver_match.url_name
 
-    # 2. Verifica as permissões de acesso DENTRO da view
-    if not request.user.is_authenticated:
-        return redirect('login')
+    # # 2. Verifica as permissões de acesso DENTRO da view
+    # if not request.user.is_authenticated:
+    #     return redirect('login')
 
-    # Ações que exigem a role de Coordenador
-    if modo in ['matricular_aluno', 'editar_aluno']:
-        if not request.user.is_superuser:
-            if not hasattr(request.user, 'voluntario') or request.user.voluntario.tipo_voluntario != 'COORDENADOR':
-                return HttpResponseForbidden("Você não tem permissão para acessar esta página.")
+    # # Ações que exigem a role de Coordenador
+    # if modo in ['cadastrar_aluno', 'editar_aluno']:
+    #     if not request.user.is_superuser:
+    #         if not hasattr(request.user, 'voluntario') or request.user.voluntario.tipo_voluntario != 'COORDENADOR':
+    #             return HttpResponseForbidden("Você não tem permissão para acessar esta página.")
 
     # 3. Lógica para buscar o aluno ou criar um novo
     aluno_instance = None
@@ -136,7 +138,7 @@ def aluno_form_view(request, aluno_id=None):
         form = AlunoForm(request.POST, instance=aluno_instance)
         if form.is_valid():
             form.save()
-            acao = "cadastrado" if modo == 'matricular_aluno' else "atualizado"
+            acao = "cadastrado" if modo == 'cadastrar_aluno' else "atualizado"
             messages.success(request, f'Aluno {acao} com sucesso!')
             return redirect('pesquisar_aluno')
     else:
