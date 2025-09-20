@@ -109,44 +109,52 @@ def pesquisar_aluno(request):
 
     return render(request, 'academico/alunos/pesquisar_aluno.html', context)
 
+def aluno_form_view(request, aluno_id=None):
+    """
+    View unificada para Matricular, Editar e Ver Detalhes de um Aluno.
+    """
+    # 1. Determina o modo (matricular, editar, detalhes) a partir do nome da URL
+    modo = request.resolver_match.url_name
 
-@role_required(['COORDENADOR'])
-@login_required
-def matricular_aluno(request):
-    if request.method == 'POST':
-        form = AlunoForm(request.POST)
+    # 2. Verifica as permissões de acesso DENTRO da view
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    # Ações que exigem a role de Coordenador
+    if modo in ['matricular_aluno', 'editar_aluno']:
+        if not request.user.is_superuser:
+            if not hasattr(request.user, 'voluntario') or request.user.voluntario.tipo_voluntario != 'COORDENADOR':
+                return HttpResponseForbidden("Você não tem permissão para acessar esta página.")
+
+    # 3. Lógica para buscar o aluno ou criar um novo
+    aluno_instance = None
+    if aluno_id:
+        aluno_instance = get_object_or_404(Aluno, pk=aluno_id)
+
+    # 4. Lógica para salvar o formulário (apenas em modo de edição/matrícula)
+    if request.method == 'POST' and modo != 'detalhes_aluno':
+        form = AlunoForm(request.POST, instance=aluno_instance)
         if form.is_valid():
             form.save()
+            acao = "cadastrado" if modo == 'matricular_aluno' else "atualizado"
+            messages.success(request, f'Aluno {acao} com sucesso!')
             return redirect('pesquisar_aluno')
     else:
-        form = AlunoForm()
+        form = AlunoForm(instance=aluno_instance)
 
-    return render(
-        request,
-        'academico/alunos/matricular_aluno.html',
-        {'form': form, 'active_menu': 'alunos'},
-    )
+    # 5. Desabilita os campos se estivermos apenas visualizando
+    if modo == 'detalhes_aluno':
+        for field in form.fields.values():
+            field.widget.attrs['disabled'] = True
 
-# Anderson
-@role_required(['COORDENADOR'])
-@login_required
-def editar_aluno(request, aluno_id):
-    aluno = get_object_or_404(Aluno, pk=aluno_id)
-
-    if request.method == 'POST':
-        form = AlunoForm(request.POST, instance=aluno)
-        if form.is_valid():
-            form.save() 
-            messages.success(request, 'Aluno atualizado com sucesso!')
-            return redirect('pesquisar_aluno')  
-    else:
-        form = AlunoForm(instance=aluno)
-
-    return render(
-        request,
-        'academico/alunos/editar_aluno.html',
-        {'form': form, 'active_menu': 'alunos'},
-    )
+    # 6. Envia tudo para o template
+    context = {
+        'form': form,
+        'aluno': aluno_instance,
+        'modo': modo,
+        'active_menu': 'alunos'
+    }
+    return render(request, 'academico/alunos/aluno_form.html', context)
 # Anderson
 
 # --------- Disciplina ----------

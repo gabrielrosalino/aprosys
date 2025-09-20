@@ -22,14 +22,18 @@ urlpatterns = [
     ),
     path(
         'academico/alunos/matricular/',
-        views.matricular_aluno,
+        views.aluno_form_view,
         name='matricular_aluno',
     ),
-    # Anderson
-    path (
+    path(
         'academico/alunos/editar/<int:aluno_id>/',
-        views.editar_aluno,
+        views.aluno_form_view,
         name='editar_aluno',
+    ),
+    path(
+        'academico/alunos/detalhes/<int:aluno_id>/',
+        views.aluno_form_view,
+        name='detalhes_aluno',
     ),
     # Anderson
 

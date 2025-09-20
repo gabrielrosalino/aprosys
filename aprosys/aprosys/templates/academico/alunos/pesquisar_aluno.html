@@ -55,7 +55,9 @@
       {% if alunos %}
         {% for aluno in alunos %}
           <tr>
-            <td>{{ aluno.nome }}</td>
+            <td>
+                <a href="{% url 'detalhes_aluno' aluno.id %}">{{ aluno.nome }}</a>
+            </td>
             <td>{{ aluno.get_status_display }}</td>
             <!-- Anderson -->
             <td>
