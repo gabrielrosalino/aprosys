@@ -99,10 +99,13 @@
 <fieldset class="chart-container">
   <h3 class="form__fieldset-heading">Dados Institucionais</h3>
   <div class="form-fields-wrapper">
-    <div class="form-group field-half">
-      {{ form.status.label_tag }}
-      {{ form.status }}
+    <div class="form-group field-full">
+      <div class="form-group field-half">
+        {{ form.status.label_tag }}
+        {{ form.status }}
+      </div>
     </div>
+    
     <div class="form-group field-half">
       {{ form.curso_interesse.label_tag }}
       {{ form.curso_interesse }}
