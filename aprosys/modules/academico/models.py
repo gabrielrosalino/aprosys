@@ -64,6 +64,13 @@ class Turma(models.Model):
         null=True,
         blank=False,
     )
+    curso = models.ForeignKey(
+        Curso,
+        on_delete=models.CASCADE,
+        verbose_name='Curso',
+        null=True,
+        blank=False,
+    )
 
     def __str__(self):
         return self.nome
@@ -237,12 +244,7 @@ class Voluntario(models.Model):
 
 
 class Aluno(models.Model):
-    PERIODO_INTERESSE = (
-        (0, 'Matutino'),
-        (1, 'Vespertino'),
-        (2, 'Noturno'),
-    )
-
+    
     STATUS_CHOICES = (
         (0, 'Inativo'),
         (1, 'Ativo'),
@@ -265,11 +267,9 @@ class Aluno(models.Model):
     )
 
     # Institucional
-    curso_interesse = models.ForeignKey(
+    curso_interesse = models.ManyToManyField(
         Curso,
-        on_delete=models.SET_NULL,
-        verbose_name='Curso de Interesse',
-        null=True,
+        verbose_name='Cursos de Interesse',
         blank=True,
     )
 
@@ -325,8 +325,11 @@ class Aluno(models.Model):
 
     # Institucionais
     status = models.IntegerField('Status', choices=STATUS_CHOICES, default=1)
-    periodo_interesse = models.IntegerField(
-        'Período de Interesse', choices=PERIODO_INTERESSE, default=0
+    periodo_interesse = models.JSONField(
+        'Período de Interesse',
+        default=list,
+        blank=True,
+        null=True
     )
 
     def __str__(self):

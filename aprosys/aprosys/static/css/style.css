@@ -89,6 +89,14 @@ body {
     color: var(--grey-dark);
 }
 
+/* Desktop + Mobile */
+.edit-button {
+    width: 2rem;
+    color: #999;
+}
+.edit-button:hover {
+    color: #555555;
+}
 
 
 

@@ -1,8 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse
-
-from .models import Aluno, Curso, CustomUser, Disciplina, PeriodoLetivo
+from django.forms import ModelForm, DateInput
+from .models import Aluno, Curso, CustomUser, Disciplina, PeriodoLetivo, Turma, Voluntario 
 from .widgets import CustomRelatedFieldWidgetWrapper
 
 
@@ -57,6 +57,26 @@ class AlunoForm(forms.ModelForm):
         initial=1,
     )
 
+    PERIODO_INTERESSE = (
+        (0, 'Matutino'),
+        (1, 'Vespertino'),
+        (2, 'Noturno'),
+    )
+    
+    periodo_interesse = forms.MultipleChoiceField(
+        label='Período de Interesse',
+        choices=PERIODO_INTERESSE,
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
+    )
+
+
+    curso_interesse = forms.ModelMultipleChoiceField(
+        queryset=Curso.objects.all(),
+        label='Cursos de Interesse',
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+    )
+
     class Meta:
         model = Aluno
         fields = [
@@ -91,16 +111,6 @@ class AlunoForm(forms.ModelForm):
             if not isinstance(field.widget, forms.Select):
                 field.widget.attrs.update({'class': 'form-control'})
 
-        rel = Aluno._meta.get_field('curso_interesse').remote_field
-        add_url = (
-            reverse('cadastrar_curso')
-        )
-        self.fields[
-            'curso_interesse'
-        ].widget = CustomRelatedFieldWidgetWrapper(
-            self.fields['curso_interesse'].widget, rel, add_url=add_url
-        )
-        self.fields['curso_interesse'].required = False
 
 
 class PeriodoLetivoForm(forms.ModelForm):
@@ -135,4 +145,46 @@ class CursoForm(forms.ModelForm):
         model = Curso
         fields = [
             'nome',
+        ]
+
+
+class TurmaForm(ModelForm):
+    class Meta:
+        model = Turma
+        fields = [
+            'nome',
+            'capacidade',
+            'data_inicio',
+            'data_fim',
+            'status',
+            'periodo_letivo',
+            'curso',
+        ]
+        widgets = {
+            'data_inicio': DateInput(attrs={'type': 'date'}),
+            'data_fim': DateInput(attrs={'type': 'date'}),
+        }
+
+class VoluntarioForm(forms.ModelForm):
+    class Meta:
+        model = Voluntario
+        fields = [
+            'user',
+            'nome',
+            'nascimento',
+            'cpf',
+            'email',
+            'telefone_contato',
+            'rua',
+            'numero',
+            'complemento',
+            'bairro',
+            'cidade',
+            'estado',
+            'cep',
+            'descricao_atividades',
+            'foto',
+            'status_processo_voluntario',
+            'tipo_voluntario',
+            'disciplina',
         ]

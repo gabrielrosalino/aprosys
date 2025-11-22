@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseForbidden
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 
 from .forms import (
     AlunoForm,
@@ -12,6 +12,8 @@ from .forms import (
     CustomUserForm,
     DisciplinaForm,
     PeriodoLetivoForm,
+    TurmaForm,
+    VoluntarioForm,
 )
 from .models import (
     Aluno,
@@ -107,24 +109,55 @@ def pesquisar_aluno(request):
 
     return render(request, 'academico/alunos/pesquisar_aluno.html', context)
 
-
-@role_required(['COORDENADOR'])
 @login_required
-def matricular_aluno(request):
-    if request.method == 'POST':
-        form = AlunoForm(request.POST)
+@role_required(['COORDENADOR'])
+def aluno_form_view(request, aluno_id=None):
+    """
+    View unificada para Matricular, Editar e Ver Detalhes de um Aluno.
+    """
+    # 1. Determina o modo (matricular, editar, detalhes) a partir do nome da URL
+    modo = request.resolver_match.url_name
+
+    # # 2. Verifica as permissões de acesso DENTRO da view
+    # if not request.user.is_authenticated:
+    #     return redirect('login')
+
+    # # Ações que exigem a role de Coordenador
+    # if modo in ['cadastrar_aluno', 'editar_aluno']:
+    #     if not request.user.is_superuser:
+    #         if not hasattr(request.user, 'voluntario') or request.user.voluntario.tipo_voluntario != 'COORDENADOR':
+    #             return HttpResponseForbidden("Você não tem permissão para acessar esta página.")
+
+    # 3. Lógica para buscar o aluno ou criar um novo
+    aluno_instance = None
+    if aluno_id:
+        aluno_instance = get_object_or_404(Aluno, pk=aluno_id)
+
+    # 4. Lógica para salvar o formulário (apenas em modo de edição/matrícula)
+    if request.method == 'POST' and modo != 'detalhes_aluno':
+        form = AlunoForm(request.POST, instance=aluno_instance)
         if form.is_valid():
             form.save()
+            acao = "cadastrado" if modo == 'cadastrar_aluno' else "atualizado"
+            messages.success(request, f'Aluno {acao} com sucesso!')
             return redirect('pesquisar_aluno')
     else:
-        form = AlunoForm()
+        form = AlunoForm(instance=aluno_instance)
 
-    return render(
-        request,
-        'academico/alunos/matricular_aluno.html',
-        {'form': form, 'active_menu': 'alunos'},
-    )
+    # 5. Desabilita os campos se estivermos apenas visualizando
+    if modo == 'detalhes_aluno':
+        for field in form.fields.values():
+            field.widget.attrs['disabled'] = True
 
+    # 6. Envia tudo para o template
+    context = {
+        'form': form,
+        'aluno': aluno_instance,
+        'modo': modo,
+        'active_menu': 'alunos'
+    }
+    return render(request, 'academico/alunos/aluno_form.html', context)
+# Anderson
 
 # --------- Disciplina ----------
 @role_required(['COORDENADOR'])
@@ -347,11 +380,21 @@ def pesquisar_periodo(request):
 @role_required(['COORDENADOR'])
 @login_required
 def cadastrar_turma(request):
+    if request.method == 'POST':
+        form = TurmaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Turma cadastrada com sucesso!')
+            return redirect('pesquisar_turma')
+    else:
+        form = TurmaForm()
+
     return render(
         request,
         'academico/turmas/cadastrar_turma.html',
-        {'active_menu': 'turmas'},
+        {'form': form, 'active_menu': 'turmas'},
     )
+
 
 
 @login_required
@@ -411,10 +454,19 @@ def pesquisar_turma(request):
 @role_required(['COORDENADOR'])
 @login_required
 def cadastrar_voluntario(request):
+    if request.method == 'POST':
+        form = VoluntarioForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Voluntário cadastrado com sucesso!')
+            return redirect('pesquisar_voluntario')
+    else:
+        form = VoluntarioForm()
+
     return render(
         request,
         'academico/voluntarios/cadastrar_voluntario.html',
-        {'active_menu': 'voluntarios'},
+        {'form': form, 'active_menu': 'voluntarios'},
     )
 
 

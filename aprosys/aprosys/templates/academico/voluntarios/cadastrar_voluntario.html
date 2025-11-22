@@ -5,8 +5,137 @@
 
 
 {% block content %}
-<div class="report-header">
-    <h3 class="report-subtitle">Cadastrar</h3>
-    <h1 class="report-title">Voluntário</h1>
+  <div class="report-header">
+      <h3 class="report-subtitle">Cadastrar</h3>
+      <h1 class="report-title">Voluntário</h1>
   </div>
+
+  {% if form.errors %}
+    <div class="alert alert-danger">
+      <ul>
+        {% for field in form %}
+          {% for err in field.errors %}
+            <li><strong>{{ field.label }}:</strong> {{ err }}</li>
+          {% endfor %}
+        {% endfor %}
+        {% for err in form.non_field_errors %}
+          <li>{{ err }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <!-- fORMULÁRIO -->
+  <form method="post" action="{% url 'cadastrar_voluntario' %}">
+    {% csrf_token %}
+
+    <fieldset class="chart-container">
+      <h3 class="form__fieldset-heading">Dados Voluntário</h3>
+      <div class="form-fields-wrapper">
+
+        <div class="form-group field-full">
+          {{ form.user.label_tag }}
+          {{ form.user }}
+        </div>
+
+        <div class="form-group field-full">
+          {{ form.nome.label_tag }}
+          {{ form.nome }}
+        </div>
+
+        <div class="form-group field-half">
+          {{ form.nascimento.label_tag }}
+          {{ form.nascimento }}
+        </div>
+
+        <div class="form-group field-half">
+          {{ form.cpf.label_tag }}
+          {{ form.cpf }}
+        </div>
+
+        <div class="form-group field-half">
+          {{ form.email.label_tag }}
+          {{ form.email }}
+        </div>  
+
+        <div class="form-group field-half">
+          {{ form.telefone_contato.label_tag }}
+          {{ form.telefone_contato }}
+        </div>
+
+        <div class="form-group field-half">
+          {{ form.rua.label_tag }}
+          {{ form.rua }}
+        </div>
+        
+        <div class="form-group field-half">
+          {{ form.numero.label_tag }}
+          {{ form.numero }}
+        </div>
+        
+        <div class="form-group field-half">
+          {{ form.complemento.label_tag }}
+          {{ form.complemento }}
+        </div>
+        
+        <div class="form-group field-half">
+          {{ form.bairro.label_tag }}
+          {{ form.bairro }}
+        </div>
+        
+        <div class="form-group field-half">
+          {{ form.cidade.label_tag }}
+          {{ form.cidade }}
+        </div>
+        
+        <div class="form-group field-half">
+          {{ form.estado.label_tag }}
+          {{ form.estado }}
+        </div>
+        
+        <div class="form-group field-half">
+          {{ form.cep.label_tag }}
+          {{ form.cep }}
+        </div>
+        
+        <div class="form-group field-half">
+          {{ form.descricao_atividades.label_tag }}
+          {{ form.descricao_atividades }}
+        </div>
+        
+        <div class="form-group field-half">
+          {{ form.foto.label_tag }}
+          {{ form.foto }}
+        </div>
+        
+        <div class="form-group field-half">
+          {{ form.status_processo_voluntario.label_tag }}
+          {{ form.status_processo_voluntario }}
+        </div>
+
+        <div class="form-group field-half">
+          {{ form.tipo_voluntario.label_tag }}
+          {{ form.tipo_voluntario }}
+        </div>    
+        
+        <div class="form-group field-half">
+          {{ form.disciplina.label_tag }}
+          {{ form.disciplina }}
+        </div>
+        
+        <div class="form-group field-half">
+          {{ form.data_inicio_processo.label_tag }}
+          {{ form.data_inicio_processo }}
+        </div>
+
+      </div>
+    </fieldset>
+
+    <!-- Botões -->
+    <div class="btn_wrapper">
+      <button type="submit" class="btn btn-save">Cadastrar</button>
+      <button type="reset"  class="btn btn-cancel">Cancelar</button>
+    </div>
+  </form>
+
 {% endblock %}

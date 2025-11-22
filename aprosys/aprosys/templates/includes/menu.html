@@ -9,8 +9,8 @@
                 <a href="{% url 'pesquisar_aluno' %}">Pesquisar Aluno</a>
             </li>
             {% else %}
-            <li class="{% if request.resolver_match.url_name == 'matricular_aluno' %}link-ativo{% endif %}">
-                <a href="{% url 'matricular_aluno' %}">Matricular Aluno</a>
+            <li class="{% if request.resolver_match.url_name == 'cadastrar_aluno' %}link-ativo{% endif %}">
+                <a href="{% url 'cadastrar_aluno' %}">Cadastrar Aluno</a>
             </li>
             <li class="{% if request.resolver_match.url_name == 'pesquisar_aluno' %}link-ativo{% endif %}">
                 <a href="{% url 'pesquisar_aluno' %}">Pesquisar Aluno</a>
@@ -38,17 +38,6 @@
     </li>
 
     {% if user.voluntario.tipo_voluntario != 'PROFESSOR' %}
-    <li>
-        <a class="menu-title" href="#">Período Letivo</a>
-        <ul class="submenu">
-            <li class="{% if request.resolver_match.url_name == 'cadastrar_periodo' %}link-ativo{% endif %}">
-                <a href="{% url 'cadastrar_periodo' %}">Cadastrar Período</a>
-            </li>
-            <li class="{% if request.resolver_match.url_name == 'pesquisar_periodo' %}link-ativo{% endif %}">
-                <a href="{% url 'pesquisar_periodo' %}">Pesquisar Período</a>
-            </li>
-        </ul>
-    </li>
     
     <li>
         <a class="menu-title" href="#">Cursos</a>

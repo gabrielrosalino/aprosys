@@ -20,11 +20,19 @@ urlpatterns = [
         views.pesquisar_aluno,
         name='pesquisar_aluno',
     ),
+    path('academico/alunos/cadastrar/', views.aluno_form_view, name='cadastrar_aluno'),
     path(
-        'academico/alunos/matricular/',
-        views.matricular_aluno,
-        name='matricular_aluno',
+        'academico/alunos/editar/<int:aluno_id>/',
+        views.aluno_form_view,
+        name='editar_aluno',
     ),
+    path(
+        'academico/alunos/detalhes/<int:aluno_id>/',
+        views.aluno_form_view,
+        name='detalhes_aluno',
+    ),
+    # Anderson
+
     # --------- Disciplina ----------
     path(
         'academico/disciplinas/cadastrar/',

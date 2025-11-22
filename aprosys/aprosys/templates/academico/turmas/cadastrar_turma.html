@@ -3,11 +3,63 @@
 
 {% block title %}Aprova System | Cadastrar Turma {% endblock %}
 
-
-
 {% block content %}
 <div class="report-header">
     <h3 class="report-subtitle">Cadastrar</h3>
     <h1 class="report-title">Turma</h1>
-  </div>
+</div>
+
+<!-- fORMULÁRIO -->
+<form method="post" action="{% url 'cadastrar_turma' %}">
+    {% csrf_token %}
+
+    <fieldset class="chart-container">
+      <h3 class="form__fieldset-heading">Dados Turma</h3>
+      <div class="form-fields-wrapper">
+
+        <div class="form-group field-full">
+          {{ form.nome.label_tag }}
+          {{ form.nome }}
+        </div>
+
+        <div class="form-group field-half">
+          {{ form.capacidade.label_tag }}
+          {{ form.capacidade }}
+        </div>
+
+        <div class="form-group field-half">
+          {{ form.data_inicio.label_tag }}
+          {{ form.data_inicio }}
+        </div>
+
+        <div class="form-group field-half">
+          {{ form.data_fim.label_tag }}
+          {{ form.data_fim }}
+        </div>
+
+        <div class="form-group field-half">
+          {{ form.status.label_tag }}
+          {{ form.status }}
+        </div>
+
+        <div class="form-group field-half">
+          {{ form.periodo_letivo.label_tag }}
+          {{ form.periodo_letivo }}
+        </div>
+
+        <div class="form-group field-half">
+          {{ form.curso.label_tag }}
+          {{ form.curso }}
+        </div>
+
+      </div>
+    </fieldset>
+
+    <!-- Botões -->
+    <div class="btn_wrapper">
+      <button type="submit" class="btn btn-save">Cadastrar</button>
+      <button type="reset"  class="btn btn-cancel">Cancelar</button>
+    </div>
+  </form>
+
 {% endblock %}
