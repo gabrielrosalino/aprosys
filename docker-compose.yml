@@ -1,0 +1,13 @@
+services:
+  web:
+    build: .
+    command: >
+      sh -c "python aprosys/manage.py migrate &&
+             python aprosys/manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
