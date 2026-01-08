@@ -11,29 +11,41 @@
     <h1 class="report-title">Curso</h1>
 </div>
 
-<form method="post" action="...">
-    {% csrf_token %}
+<form method="post" 
+      action="{% if visualizar %}#{% elif curso %}{% url 'editar_curso' curso.pk %}{% else %}{% url 'cadastrar_curso' %}{% endif %}" 
+      id="curso-form">
+  {% csrf_token %}
 
-    <fieldset class="chart-container">
-        <div class="form-fields-wrapper">
-            <div class="form-group field-half">
-                {{ form.nome.label_tag }}
-                <input type="text" name="nome" value="{{ curso.nome }}" 
-                       {% if visualizar %}readonly{% endif %}>
-            </div>
-        </div>
-    </fieldset>
+  {% if field_name %}
+    <input type="hidden" name="field_name" value="{{ field_name }}">
+  {% elif request.GET.field_name %}
+    <input type="hidden" name="field_name" value="{{ request.GET.field_name }}">
+  {% endif %}
 
-    <div class="btn_wrapper">
-        {% if not visualizar %}
-            <button type="submit" class="btn btn-save">
-                {% if curso %}Salvar Alterações{% else %}Cadastrar{% endif %}
-            </button>
+  <fieldset class="chart-container">
+    <div class="form-fields-wrapper">
+      <div class="form-group field-half">
+        {{ form.nome.label_tag }}
+        {% if visualizar %}
+          <input type="text" value="{{ curso.nome }}" readonly class="form-control">
+        {% else %}
+          {{ form.nome }}
         {% endif %}
-        
-        <button type="button" class="btn btn-cancel" onclick="window.history.back();">
-            {% if visualizar %}Voltar{% else %}Cancelar{% endif %}
-        </button>
+      </div>
     </div>
+  </fieldset>
+
+  <div class="btn_wrapper">
+    {% if not visualizar %}
+      <button type="submit" class="btn btn-save">
+        {% if curso %}Salvar Alterações{% else %}Cadastrar{% endif %}
+      </button>
+    {% endif %}
+    
+    <button type="button" class="btn btn-cancel"
+      onclick="if(window.opener) { window.close(); } else { window.history.back(); }">
+      {% if visualizar %}Voltar{% elif field_name or request.GET.field_name %}Fechar{% else %}Cancelar{% endif %}
+    </button>
+  </div>
 </form>
 {% endblock %}
