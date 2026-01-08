@@ -1,3 +1,5 @@
+/* search_tables.css */
+
 /* --------------------------------------------------
                     BARRA DE PESQUISA
 -------------------------------------------------- */
@@ -21,7 +23,7 @@ table {
 }
 
 th, td {
-    padding: 7px 15px;
+    padding: 12px 15px; /* Aumentado levemente para melhor leitura */
 }
 
 th {
@@ -31,7 +33,6 @@ th {
     text-align: start;
 }
 
-/* Estilo para cabeçalhos que permitem ordenação */
 th.sortable {
     cursor: pointer;
 }
@@ -41,8 +42,10 @@ td {
     border-bottom: 1px solid #f3f3f3;
     color: var(--text-color-dark);
     font-size: 0.95em;
+    vertical-align: middle;
 }
 
+/* Estilo para links de texto dentro da tabela */
 td a, td a:visited {
     text-decoration: none;
     color: inherit;
@@ -53,13 +56,71 @@ td a:hover {
     color: var(--secondary-color);
 }
 
-/* Removendo a borda inferior da última linha para estética */
 tbody tr:last-child td {
     border-bottom: none;
 }
 
 /* --------------------------------------------------
-                MEDIA QUERIES (RESPONSIVIDADE)
+                AÇÕES DO CRUD (Botões e Destaque)
+-------------------------------------------------- */
+
+/* Centraliza as colunas de ação */
+.table-action-cell {
+    text-align: center !important;
+    width: 80px;
+}
+
+/* Tamanho padronizado para os ícones SVG */
+.edit-button, 
+.delete-button {
+    display: inline-block;
+    width: 20px; 
+    height: 20px;
+    color: #999;
+    transition: color 0.2s ease, transform 0.2s ease;
+    cursor: pointer;
+}
+
+.edit-button:hover {
+    color: var(--secondary-color); /* Turquesa do sistema */
+    transform: scale(1.1);
+}
+
+.delete-button:hover {
+    color: #ff4d4d; /* Vermelho para exclusão */
+    transform: scale(1.1);
+}
+
+/* Garante que o SVG preencha o container de 20px */
+.table-action-cell a svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* Destaque visual da linha selecionada */
+tr.row-selected td {
+    font-weight: bold !important;
+    color: var(--primary-color) !important; /* Azul escuro do menu */
+    background-color: #f0f7f7 !important; /* Fundo turquesa clarinho */
+}
+
+.table-empty-message {
+    text-align: center;
+    padding: 25px;
+    color: var(--text-color-medium);
+    font-style: italic;
+}
+
+/* Estilo para os checkboxes na tabela */
+.course-checkbox, #select-all-courses {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    accent-color: var(--secondary-color);
+}
+
+/* --------------------------------------------------
+                MEDIA QUERIES
 -------------------------------------------------- */
 @media (max-width: 768px) {
     .search-container-table {

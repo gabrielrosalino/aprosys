@@ -381,6 +381,16 @@ def excluir_curso(request, curso_id):
     messages.success(request, f'Curso "{nome_curso}" excluído com sucesso!')
     return redirect('pesquisar_curso')
 
+@role_required(['COORDENADOR'])
+@login_required
+def excluir_cursos_massa(request):
+    if request.method == 'POST':
+        ids_raw = request.POST.get('curso_ids', '')
+        if ids_raw:
+            ids_list = ids_raw.split(',')
+            Curso.objects.filter(pk__in=ids_list).delete()
+            messages.success(request, f'{len(ids_list)} cursos excluídos com sucesso!')
+    return redirect('pesquisar_curso')
 
 
 # --------- Período ----------

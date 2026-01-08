@@ -9,45 +9,59 @@
     <h1 class="report-title">Curso</h1>
 </div>
 
-<form
-    id="search-form"
-    action="{% url 'pesquisar_curso' %}"
-    method="get"
-    class="search-container search-container-table"
->
-    <input
-        id="search-input"
-        type="text"
-        name="q"
-        placeholder="Pesquise por um curso"
-        value="{{ q|urlencode }}"
-        autocomplete="off"
+<div style="display: flex; align-items: center; justify-content: space-between; margin-top: 40px; margin-bottom: 20px; min-height: 45px;">
+    
+    <form
+        id="search-form"
+        action="{% url 'pesquisar_curso' %}"
+        method="get"
+        class="search-container search-container-table"
+        style="margin: 0; flex-grow: 1; max-width: 300px;"
     >
-    <button
-        id="clear-btn"
-        type="button"
-        class="clear-button"
-        aria-label="Limpar pesquisa"
-    >&times;</button>
-</form>
+        <input
+            id="search-input"
+            type="text"
+            name="q"
+            placeholder="Pesquise por um curso"
+            value="{{ q|urlencode }}"
+            autocomplete="off"
+        >
+        <button
+            id="clear-btn"
+            type="button"
+            class="clear-button"
+            aria-label="Limpar pesquisa"
+        >&times;</button>
+    </form>
+
+    <div id="bulk-actions-container" style="visibility: hidden; margin-left: 20px;">
+        <button type="button" id="btn-delete-selected" class="btn btn-cancel" style="margin: 0; white-space: nowrap;">
+            Excluir Selecionados
+        </button>
+    </div>
+</div>
 
 <table>
     <thead>
         <tr>
+            <th><input type="checkbox" id="select-all-courses"></th>
             <th class="sortable" data-field="nome">
                 <span>Curso</span>
                 {% if order == 'nome' %}
                     <span>{% if dir == 'asc' %}▲{% else %}▼{% endif %}</span>
                 {% endif %}
             </th>
-            <th><span>Editar</span></th>
-            <th><span>Excluir</span></th> </tr>
+            <th class="table-action-cell"><span>Editar</span></th>
+            <th class="table-action-cell"><span>Excluir</span></th>
+        </tr>
     </thead>
     <tbody>
         {% if cursos %}
             {% for curso in cursos %}
                 <tr>
+                    <td><input type="checkbox" class="course-checkbox" value="{{ curso.pk }}"></td>
                     <td>{{ curso.nome }}</td>
+                    
                     <td class="table-action-cell">
                         <a href="{% url 'editar_curso' curso.pk %}">              
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" class="edit-button">
@@ -55,6 +69,7 @@
                             </svg>
                         </a>
                     </td>
+
                     <td class="table-action-cell">
                         <a href="{% url 'excluir_curso' curso.pk %}" onclick="return confirm('Excluir {{ curso.nome }}?');">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="delete-button">
@@ -66,47 +81,123 @@
             {% endfor %}
         {% else %}
             <tr>
-                <td colspan="3">Nenhum curso encontrado.</td> </tr>
+                <td colspan="4" class="table-empty-message">Nenhum curso encontrado.</td>
+            </tr>
         {% endif %}
     </tbody>
 </table>
 
+<form id="bulk-delete-form" action="{% url 'excluir_cursos_massa' %}" method="POST" style="display: none;">
+    {% csrf_token %}
+    <input type="hidden" name="curso_ids" id="curso-ids-input">
+</form>
+
 <script>
-    document.addEventListener('DOMContentLoaded', function(){
-      const form     = document.getElementById('search-form');
-      const input    = document.getElementById('search-input');
-      const clearBtn = document.getElementById('clear-btn');
-      const qParam   = "{{ q|escapejs }}";
-      let orderParam = "{{ order }}";
-      let dirParam   = "{{ dir }}";
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- 1. Seleção de Elementos ---
+        const searchForm = document.getElementById('search-form');
+        const searchInput = document.getElementById('search-input');
+        const clearBtn = document.getElementById('clear-btn');
+        
+        const selectAll = document.getElementById('select-all-courses');
+        const checkboxes = document.querySelectorAll('.course-checkbox');
+        const bulkContainer = document.getElementById('bulk-actions-container');
+        const btnDeleteSelected = document.getElementById('btn-delete-selected');
+        const bulkForm = document.getElementById('bulk-delete-form');
+        const bulkInput = document.getElementById('curso-ids-input');
 
-      input.addEventListener('keydown', e => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          form.submit();
+        // --- 2. Função de Atualização da Interface (Destaque Visual) ---
+        function updateUI() {
+            const checkedCount = document.querySelectorAll('.course-checkbox:checked').length;
+            
+            // Exibir/Esconder container de ações em massa
+            if (bulkContainer) {
+                // Em vez de block/none, usamos visibility
+                bulkContainer.style.visibility = checkedCount > 0 ? 'visible' : 'hidden';
+                // Opcional: mantemos o display block para ele ocupar o espaço sempre
+                bulkContainer.style.display = 'block'; 
+            }
+
+            // Aplicar negrito e fundo nas linhas selecionadas
+            document.querySelectorAll('.course-checkbox').forEach(cb => {
+                const row = cb.closest('tr');
+                if (row) {
+                    if (cb.checked) {
+                        row.classList.add('row-selected');
+                    } else {
+                        row.classList.remove('row-selected');
+                    }
+                }
+            });
         }
-      });
 
-      clearBtn.addEventListener('click', () => {
-        input.value = '';
-        form.submit();
-      });
+        // --- 3. Eventos de Pesquisa ---
+        if (searchInput) {
+            searchInput.addEventListener('keydown', e => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    searchForm.submit();
+                }
+            });
+        }
 
-      document.querySelectorAll('th.sortable').forEach(th => {
-        th.style.cursor = 'pointer';
-        th.addEventListener('click', () => {
-          const field = th.dataset.field;
-          let newDir = 'asc';
-          if (field === orderParam) {
-            newDir = dirParam === 'asc' ? 'desc' : 'asc';
-          }
-          const params = new URLSearchParams();
-          if (qParam) params.set('q', qParam);
-          params.set('order', field);
-          params.set('dir', newDir);
-          window.location.search = params.toString();
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                searchForm.submit();
+            });
+        }
+
+        document.querySelectorAll('th.sortable').forEach(th => {
+            th.addEventListener('click', () => {
+                const field = th.dataset.field;
+                const qParam = "{{ q|escapejs }}";
+                let orderParam = "{{ order }}";
+                let dirParam = "{{ dir }}";
+                let newDir = (field === orderParam && dirParam === 'asc') ? 'desc' : 'asc';
+                
+                const params = new URLSearchParams();
+                if (qParam) params.set('q', qParam);
+                params.set('order', field);
+                params.set('dir', newDir);
+                window.location.search = params.toString();
+            });
         });
-      });
+
+        // --- 4. Eventos de Seleção ---
+        if (selectAll) {
+            selectAll.addEventListener('change', function() {
+                checkboxes.forEach(cb => {
+                    cb.checked = selectAll.checked;
+                });
+                updateUI();
+            });
+        }
+
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', function() {
+                // Desmarca o "selecionar todos" se um item for desmarcado
+                if (!this.checked && selectAll) selectAll.checked = false;
+                // Marca o "selecionar todos" se todos os itens forem marcados manualmente
+                const allChecked = document.querySelectorAll('.course-checkbox:checked').length === checkboxes.length;
+                if (allChecked && selectAll) selectAll.checked = true;
+                
+                updateUI();
+            });
+        });
+
+        // --- 5. Ação de Excluir Selecionados ---
+        if (btnDeleteSelected) {
+            btnDeleteSelected.addEventListener('click', function() {
+                const selectedIds = Array.from(document.querySelectorAll('.course-checkbox:checked'))
+                                         .map(cb => cb.value);
+                
+                if (confirm(`Tem certeza que deseja excluir os ${selectedIds.length} cursos selecionados?`)) {
+                    bulkInput.value = selectedIds.join(',');
+                    bulkForm.submit();
+                }
+            });
+        }
     });
 </script>
 {% endblock %}

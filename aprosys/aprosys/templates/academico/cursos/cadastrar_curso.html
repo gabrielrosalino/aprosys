@@ -1,11 +1,11 @@
 {% extends 'logged_base.html' %}
 {% load static %}
 
-{% block title %}Aprova System | Cadastrar Curso {% endblock %}
+{% block title %}Aprova System | {% if curso %}Editar{% else %}Cadastrar{% endif %} Curso {% endblock %}
 
 {% block content %}
 <div class="report-header">
-  <h3 class="report-subtitle">Cadastrar</h3>
+  <h3 class="report-subtitle">{% if curso %}Editar{% else %}Cadastrar{% endif %}</h3>
   <h1 class="report-title">Curso</h1>
 </div>
 
@@ -13,39 +13,42 @@
 <div class="alert alert-danger">
   <ul>
     {% for field in form %}
-    {% for err in field.errors %}
-    <li><strong>{{ field.label }}:</strong> {{ err }}</li>
-    {% endfor %}
+      {% for err in field.errors %}
+        <li><strong>{{ field.label }}:</strong> {{ err }}</li>
+      {% endfor %}
     {% endfor %}
     {% for err in form.non_field_errors %}
-    <li>{{ err }}</li>
+      <li>{{ err }}</li>
     {% endfor %}
   </ul>
 </div>
 {% endif %}
 
-<form method="post" action="{% url 'cadastrar_curso' %}" id="curso-form">
+<form method="post" 
+      action="{% if curso %}{% url 'editar_curso' curso.pk %}{% else %}{% url 'cadastrar_curso' %}{% endif %}" 
+      id="curso-form">
   {% csrf_token %}
 
   {% if field_name %}
-  <input type="hidden" name="field_name" value="{{ field_name }}">
+    <input type="hidden" name="field_name" value="{{ field_name }}">
   {% elif request.GET.field_name %}
-  <input type="hidden" name="field_name" value="{{ request.GET.field_name }}">
+    <input type="hidden" name="field_name" value="{{ request.GET.field_name }}">
   {% endif %}
 
   <fieldset class="chart-container">
     <div class="form-fields-wrapper">
-
       <div class="form-group field-half">
         {{ form.nome.label_tag }}
         {{ form.nome }}
       </div>
-
     </div>
   </fieldset>
 
   <div class="btn_wrapper">
-    <button type="submit" class="btn btn-save">Cadastrar</button>
+    <button type="submit" class="btn btn-save">
+      {% if curso %}Salvar Alterações{% else %}Cadastrar{% endif %}
+    </button>
+    
     <button type="button" class="btn btn-cancel"
       onclick="if(window.opener) { window.close(); } else { window.history.back(); }">
       {% if field_name or request.GET.field_name %}Fechar{% else %}Cancelar{% endif %}

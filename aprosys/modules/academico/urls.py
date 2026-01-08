@@ -98,4 +98,5 @@ urlpatterns = [
         views.excluir_curso, 
         name='excluir_curso'
     ),
+    path('academico/cursos/excluir-massa/', views.excluir_cursos_massa, name='excluir_cursos_massa'),
 ]
