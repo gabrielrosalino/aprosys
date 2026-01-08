@@ -99,4 +99,5 @@ urlpatterns = [
         name='excluir_curso'
     ),
     path('academico/cursos/excluir-massa/', views.excluir_cursos_massa, name='excluir_cursos_massa'),
+    path('curso/informacoes/<int:pk>/', views.informacoes_curso, name='informacoes_curso'),
 ]

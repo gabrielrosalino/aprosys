@@ -60,7 +60,11 @@
             {% for curso in cursos %}
                 <tr>
                     <td><input type="checkbox" class="course-checkbox" value="{{ curso.pk }}"></td>
-                    <td>{{ curso.nome }}</td>
+                    <td>
+                        <a href="{% url 'informacoes_curso' curso.pk %}" class="course-info-link">
+                            {{ curso.nome }}
+                        </a>
+                    </td>
                     
                     <td class="table-action-cell">
                         <a href="{% url 'editar_curso' curso.pk %}">              

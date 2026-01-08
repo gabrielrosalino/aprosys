@@ -392,6 +392,15 @@ def excluir_cursos_massa(request):
             messages.success(request, f'{len(ids_list)} cursos excluídos com sucesso!')
     return redirect('pesquisar_curso')
 
+@login_required
+def informacoes_curso(request, pk):
+    curso = get_object_or_404(Curso, pk=pk)
+    # Passamos o objeto curso e uma flag 'visualizar' como True
+    return render(request, 'academico/cursos/cadastrar_curso.html', {
+        'curso': curso,
+        'visualizar': True 
+    })
+
 
 # --------- Período ----------
 @role_required(['COORDENADOR'])
