@@ -93,4 +93,9 @@ urlpatterns = [
         views.pesquisar_curso,
         name='pesquisar_curso',
     ),
+    path(
+        'academico/cursos/excluir/<int:curso_id>/', 
+        views.excluir_curso, 
+        name='excluir_curso'
+    ),
 ]

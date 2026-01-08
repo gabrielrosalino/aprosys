@@ -372,7 +372,18 @@ def pesquisar_curso(request):
         },
     )
 
+@role_required(['COORDENADOR'])
+@login_required
+def excluir_curso(request, curso_id):
+    curso = get_object_or_404(Curso, pk=curso_id)
+    nome_curso = curso.nome
+    curso.delete()
+    messages.success(request, f'Curso "{nome_curso}" excluído com sucesso!')
+    return redirect('pesquisar_curso')
 
+
+
+# --------- Período ----------
 @role_required(['COORDENADOR'])
 @login_required
 def pesquisar_periodo(request):

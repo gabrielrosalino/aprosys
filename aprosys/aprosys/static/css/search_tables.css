@@ -1,5 +1,5 @@
 /* --------------------------------------------------
-                    BARRA DE PESQUISA DA PÁGINA
+                    BARRA DE PESQUISA
 -------------------------------------------------- */
 .search-container-table {
     max-width: 300px;
@@ -11,7 +11,6 @@
     border: 1px solid var(--grey-light);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
 }
-
 
 /* --------------------------------------------------
                     TABELA DE PESQUISA
@@ -32,6 +31,11 @@ th {
     text-align: start;
 }
 
+/* Estilo para cabeçalhos que permitem ordenação */
+th.sortable {
+    cursor: pointer;
+}
+
 td {
     text-align: left;
     border-bottom: 1px solid #f3f3f3;
@@ -49,14 +53,13 @@ td a:hover {
     color: var(--secondary-color);
 }
 
-/* Removendo a borda inferior da última linha para parecer com a imagem */
+/* Removendo a borda inferior da última linha para estética */
 tbody tr:last-child td {
     border-bottom: none;
 }
 
-
 /* --------------------------------------------------
-                    MEDIA QUERIES (RESPONSIVIDADE)
+                MEDIA QUERIES (RESPONSIVIDADE)
 -------------------------------------------------- */
 @media (max-width: 768px) {
     .search-container-table {

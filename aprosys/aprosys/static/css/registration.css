@@ -1,3 +1,5 @@
+/* registration.css */
+
 :root {
     /* CORES */
     --color-bg-dark: #003366;
@@ -25,10 +27,10 @@
 
 /* ----------------- GLOBAL ----------------- */
 
-*  {
-margin: 0;
-padding: 0;
-box-sizing: border-box;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
@@ -70,7 +72,6 @@ body {
 .text-link {
     font-size: var(--font-size-mobile-sm);
 }
-
 
 .text-link a {
     color: var(--color-font-green);
@@ -118,24 +119,6 @@ form .button input:hover {
     align-items: center;
 }
 
-/* .login-return-button {
-    display: inline-block;
-    background-color: var(--btn-color);
-    color: #fff;
-    text-decoration: none;
-    padding: 12px 24px;
-    font-size: 18px;
-    border-radius: 30px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    text-align: center;
-    min-width: 150px;
-} */
-
-/* .login-return-button:hover {
-    background-color: rgb(0, 141, 135);
-    transform: scale(1.05);
-} */
-
 /* ----------------- CHECKBOX ----------------- */
 
 .checkbox-container label input[type="checkbox"] {
@@ -144,7 +127,6 @@ form .button input:hover {
     height: 16px;
     accent-color: #00A19A;
 }
-
 
 /* ----------------- CARD PRINCIPAL ----------------- */
 
@@ -244,4 +226,55 @@ h1 {
 
 .permission-container {
     margin-top: 20px;
+}
+
+/* ----------------- CRUD & TABELAS DE ENTIDADES ----------------- */
+
+/* Centraliza os ícones de ação na tabela de listagem */
+.table-action-cell {
+    text-align: center;
+    width: 80px;
+    padding: 7px 5px;
+    vertical-align: middle;
+}
+
+/* Estilo unificado para os ícones de ação (SVG) */
+.edit-button, 
+.delete-button {
+    display: inline-block;
+    /* Limitamos largura e altura para evitar que o SVG expanda */
+    width: 24px; 
+    height: 24px;
+    max-width: 1.5rem;
+    max-height: 1.5rem;
+    
+    color: #999;
+    transition: color 0.2s ease, transform 0.2s ease;
+    cursor: pointer;
+}
+
+/* Hover específico para exclusão */
+.delete-button:hover {
+    color: var(--color-error);
+    transform: scale(1.1);
+}
+
+/* Hover específico para edição */
+.edit-button:hover {
+    color: var(--color-font-green);
+    transform: scale(1.1);
+}
+
+/* Garante que o SVG dentro do link herde o tamanho */
+.table-action-cell a svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* Mensagem de feedback para tabelas vazias */
+.table-empty-message {
+    text-align: center;
+    padding: 25px;
+    color: var(--color-font-dark);
+    font-style: italic;
 }
