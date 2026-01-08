@@ -249,7 +249,48 @@ def cadastrar_periodo(request):
 # --------- Cursos ----------
 @role_required(['COORDENADOR'])
 @login_required
-def cadastrar_curso(request):
+def curso_form_view(request, curso_id=None): # Nome alterado para seguir o padrão
+    field_name = request.GET.get('field_name') or request.POST.get('field_name')
+    
+    # Busca o curso se houver ID, senão cria um novo
+    curso_instance = None
+    if curso_id:
+        curso_instance = get_object_or_404(Curso, pk=curso_id)
+
+    if request.method == 'POST':
+        form = CursoForm(request.POST, instance=curso_instance)
+        if form.is_valid():
+            curso = form.save()
+            
+            # Lógica para quando o curso é cadastrado via popup (janela filha)
+            if field_name:
+                return HttpResponse(f"""
+                    <script>
+                        if (window.opener) {{
+                            window.opener.postMessage({{
+                                type: 'add_related',
+                                name: '{field_name}',
+                                value: '{curso.id_curso}',
+                                text: '{curso.nome.replace("'", "\\'")}'
+                            }}, '*');
+                        }}
+                        setTimeout(function() {{ window.close(); }}, 100);
+                    </script>
+                    <div style='padding: 20px; text-align: center;'>
+                        <h3>Curso salvo com sucesso!</h3>
+                    </div>
+                """)
+            
+            messages.success(request, f'Curso {"atualizado" if curso_id else "cadastrado"} com sucesso!')
+            return redirect('pesquisar_curso')
+    else:
+        form = CursoForm(instance=curso_instance)
+
+    return render(
+        request,
+        'academico/cursos/cadastrar_curso.html',
+        {'form': form, 'field_name': field_name, 'curso': curso_instance},
+    )
     field_name = request.GET.get('field_name') or request.POST.get(
         'field_name'
     )

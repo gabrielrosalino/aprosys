@@ -80,8 +80,13 @@ urlpatterns = [
     # --------- Cursos ----------
     path(
         'academico/cursos/cadastrar/',
-        views.cadastrar_curso,
+        views.curso_form_view, # Nome da função atualizada
         name='cadastrar_curso',
+    ),
+    path(
+        'academico/cursos/editar/<int:curso_id>/', # ROTA QUE FALTAVA
+        views.curso_form_view,
+        name='editar_curso',
     ),
     path(
         'academico/cursos/pesquisar/',
