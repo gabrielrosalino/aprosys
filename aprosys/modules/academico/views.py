@@ -26,7 +26,9 @@ from .models import (
     Voluntario,
 )
 
+#region UTILITÁRIOS, AUTENTICAÇÃO E NAVEGAÇÃO BASE -  
 
+# Decorator personalizado para restringir o acesso a views com base no tipo de voluntário
 def role_required(allowed_roles):
     def decorator(view_func):
         @wraps(view_func)
@@ -45,7 +47,7 @@ def role_required(allowed_roles):
 
     return decorator
 
-
+# Gerencia a criação de novos usuários no sistema através do CustomUserForm e redireciona para o login após o sucesso
 def user_registration(request):
     if request.method == 'POST':
         form = CustomUserForm(request.POST)
@@ -59,13 +61,13 @@ def user_registration(request):
         request, 'registration/user_registration.html', {'form': form}
     )
 
-
+# Renderiza a página inicial (Dashboard) do sistema Aprova System após o login
 @login_required
 def home(request):
     return render(request, 'academico/home.html')
+#endregion
 
-
-# --------- Alunos ----------
+#region ALUNOS - ANDERSON
 @login_required
 def pesquisar_aluno(request):
     query = request.GET.get('q', '')
@@ -157,9 +159,9 @@ def aluno_form_view(request, aluno_id=None):
         'active_menu': 'alunos'
     }
     return render(request, 'academico/alunos/aluno_form.html', context)
-# Anderson
+#endregion
 
-# --------- Disciplina ----------
+#region DISCIPLINA - LORENA
 @role_required(['COORDENADOR'])
 @login_required
 def cadastrar_disciplina(request):
@@ -178,7 +180,6 @@ def cadastrar_disciplina(request):
             'active_menu': 'disciplina',
         },
     )
-
 
 @login_required
 def pesquisar_disciplina(request):
@@ -228,9 +229,9 @@ def pesquisar_disciplina(request):
             'active_menu': 'disciplinas',
         },
     )
+#endregion
 
-
-# --------- Período Letivo ----------
+#region DISCIPLINA - 
 @role_required(['COORDENADOR'])
 @login_required
 def cadastrar_periodo(request):
@@ -244,9 +245,9 @@ def cadastrar_periodo(request):
     return render(
         request, 'academico/periodos/cadastrar_periodo.html', {'form': form}
     )
+#endregion
 
-
-# --------- Cursos ----------
+#region CURSOS - LORENA
 @role_required(['COORDENADOR'])
 @login_required
 def curso_form_view(request, curso_id=None): # Nome alterado para seguir o padrão
@@ -339,7 +340,6 @@ def curso_form_view(request, curso_id=None): # Nome alterado para seguir o padr�
         {'form': form, 'field_name': field_name},
     )
 
-
 @login_required
 def pesquisar_curso(request):
     q = request.GET.get('q', '').strip()
@@ -400,9 +400,9 @@ def informacoes_curso(request, pk):
         'curso': curso,
         'visualizar': True 
     })
+#endregion
 
-
-# --------- Período ----------
+#region PERÍODO LETIVO - ????
 @role_required(['COORDENADOR'])
 @login_required
 def pesquisar_periodo(request):
@@ -445,9 +445,9 @@ def pesquisar_periodo(request):
             'active_menu': 'periodo',
         },
     )
+#endregion
 
-
-# --------- Turmas ----------
+#region TURMAS - 
 @role_required(['COORDENADOR'])
 @login_required
 def cadastrar_turma(request):
@@ -465,8 +465,6 @@ def cadastrar_turma(request):
         'academico/turmas/cadastrar_turma.html',
         {'form': form, 'active_menu': 'turmas'},
     )
-
-
 
 @login_required
 def pesquisar_turma(request):
@@ -519,9 +517,9 @@ def pesquisar_turma(request):
             'active_menu': 'turmas',
         },
     )
+#endregion
 
-
-# --------- Voluntários ----------
+#region VOLUNTÁRIOS - 
 @role_required(['COORDENADOR'])
 @login_required
 def cadastrar_voluntario(request):
@@ -539,7 +537,6 @@ def cadastrar_voluntario(request):
         'academico/voluntarios/cadastrar_voluntario.html',
         {'form': form, 'active_menu': 'voluntarios'},
     )
-
 
 @login_required
 def pesquisar_voluntario(request):
@@ -577,3 +574,4 @@ def pesquisar_voluntario(request):
     return render(
         request, 'academico/voluntarios/pesquisar_voluntario.html', context
     )
+#endregion
