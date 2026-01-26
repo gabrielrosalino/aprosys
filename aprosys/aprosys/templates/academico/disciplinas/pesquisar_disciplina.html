@@ -9,31 +9,25 @@
     <h1 class="report-title">Disciplina</h1>
 </div>
 
-<form
-    id="search-form"
-    action="{% url 'pesquisar_disciplina' %}"
-    method="get"
-    class="search-container search-container-table"
->
-    <input
-        id="search-input"
-        type="text"
-        name="q"
-        placeholder="Pesquise por uma disciplina"
-        value="{{ q|urlencode }}"
-        autocomplete="off"
-    >
-    <button
-        id="clear-btn"
-        type="button"
-        class="clear-button"
-        aria-label="Limpar pesquisa"
-    >&times;</button>
-</form>
+<div style="display: flex; align-items: center; justify-content: space-between; margin-top: 40px; margin-bottom: 20px; min-height: 45px;">
+    
+    <form id="search-form" action="{% url 'pesquisar_disciplina' %}" method="get" 
+          class="search-container search-container-table" style="margin: 0; flex-grow: 1; max-width: 300px;">
+        <input id="search-input" type="text" name="q" placeholder="Pesquise por uma disciplina" value="{{ q|urlencode }}" autocomplete="off">
+        <button id="clear-btn" type="button" class="clear-button" aria-label="Limpar pesquisa">&times;</button>
+    </form>
+
+    <div id="bulk-actions-container" style="visibility: hidden; margin-left: 20px;">
+        <button type="button" id="btn-delete-selected" class="btn btn-cancel" style="margin: 0; white-space: nowrap;">
+            Excluir Selecionadas
+        </button>
+    </div>
+</div>
 
 <table>
     <thead>
         <tr>
+            <th><input type="checkbox" id="select-all-disciplinas"></th>
             <th class="sortable" data-field="nome">
                 <span>Disciplina</span>
                 {% if order == 'nome' %}
@@ -52,15 +46,32 @@
                     <span>{% if dir == 'asc' %}▲{% else %}▼{% endif %}</span>
                 {% endif %}
             </th>
+            <th class="table-action-cell"><span>Editar</span></th>
+            <th class="table-action-cell"><span>Excluir</span></th>
         </tr>
     </thead>
     <tbody>
         {% if disciplinas %}
             {% for disciplina in disciplinas %}
                 <tr>
+                    <td><input type="checkbox" class="disciplina-checkbox" value="{{ disciplina.pk }}"></td>
                     <td>{{ disciplina.nome }}</td>
                     <td>{{ disciplina.get_area_conhecimento_display }}</td>
                     <td>{{ disciplina.get_status_display }}</td>
+                    <td class="table-action-cell">
+                        <a href="{% url 'editar_disciplina' disciplina.pk %}">              
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" class="edit-button">
+                                <path fill="currentColor" d="M439.5 107.8C447.1 100.2 457.3 96 468 96C478.7 96 488.9 100.2 496.5 107.8L532.2 143.5C539.8 151.1 544 161.3 544 172C544 182.7 539.8 192.9 532.2 200.5L473.7 259L381 166.3L439.5 107.8zM358.3 189L451 281.7L238.2 494.4C231.4 501.2 222.9 506.2 213.6 508.8L99.5 540.5L131.2 426.4C133.8 417.1 138.7 408.6 145.6 401.8L358.3 189zM468 64C448.8 64 430.4 71.6 416.9 85.2L122.9 379.2C112.2 389.9 104.4 403.3 100.3 417.9L64.9 545.6C62.6 553.9 64.9 562.9 71.1 569C77.3 575.1 86.2 577.5 94.5 575.2L222.3 539.7C236.9 535.6 250.2 527.9 261 517.1L555 223.1C568.4 209.6 576 191.2 576 172C576 152.8 568.4 134.4 554.8 120.9L519.1 85.2C505.6 71.6 487.2 64 468 64z"/>
+                            </svg>
+                        </a>
+                    </td>
+                    <td class="table-action-cell">
+                        <a href="{% url 'excluir_disciplina' disciplina.pk %}" onclick="return confirm('Excluir {{ disciplina.nome }}?');">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="delete-button">
+                                <path fill="currentColor" d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/>
+                            </svg>
+                        </a>
+                    </td>
                 </tr>
             {% endfor %}
         {% else %}
@@ -71,8 +82,14 @@
     </tbody>
 </table>
 
+<form id="bulk-delete-form" action="{% url 'excluir_disciplinas_massa' %}" method="POST" style="display: none;">
+    {% csrf_token %}
+    <input type="hidden" name="disciplina_ids" id="disciplina-ids-input">
+</form>
+
 <script>
     document.addEventListener('DOMContentLoaded', function(){
+      // --- 1. SEUS ELEMENTOS DE PESQUISA (MANTIDOS) ---
       const form     = document.getElementById('search-form');
       const input    = document.getElementById('search-input');
       const clearBtn = document.getElementById('clear-btn');
@@ -80,6 +97,32 @@
       let orderParam = "{{ order }}";
       let dirParam   = "{{ dir }}";
 
+      // --- 2. NOVOS ELEMENTOS DE SELEÇÃO EM MASSA ---
+      const selectAll = document.getElementById('select-all-disciplinas');
+      const checkboxes = document.querySelectorAll('.disciplina-checkbox');
+      const bulkContainer = document.getElementById('bulk-actions-container');
+      const btnDeleteSelected = document.getElementById('btn-delete-selected');
+      const bulkForm = document.getElementById('bulk-delete-form');
+      const bulkInput = document.getElementById('disciplina-ids-input');
+
+      // Função para atualizar o visual e exibir o botão de excluir
+      function updateUI() {
+          const checkedCount = document.querySelectorAll('.disciplina-checkbox:checked').length;
+          
+          // Mostra o botão de excluir apenas se houver algo marcado
+          if (bulkContainer) {
+              bulkContainer.style.visibility = checkedCount > 0 ? 'visible' : 'hidden';
+          }
+
+          // Destaca as linhas selecionadas
+          document.querySelectorAll('.disciplina-checkbox').forEach(cb => {
+              const row = cb.closest('tr');
+              if (cb.checked) row.classList.add('row-selected');
+              else row.classList.remove('row-selected');
+          });
+      }
+
+      // --- 3. SEUS EVENTOS DE PESQUISA (MANTIDOS) ---
       input.addEventListener('keydown', e => {
         if (e.key === 'Enter') {
           e.preventDefault();
@@ -96,10 +139,7 @@
         th.style.cursor = 'pointer';
         th.addEventListener('click', () => {
           const field = th.dataset.field;
-          let newDir = 'asc';
-          if (field === orderParam) {
-            newDir = dirParam === 'asc' ? 'desc' : 'asc';
-          }
+          let newDir = (field === orderParam && dirParam === 'asc') ? 'desc' : 'asc';
           const params = new URLSearchParams();
           if (qParam) params.set('q', qParam);
           params.set('order', field);
@@ -107,6 +147,30 @@
           window.location.search = params.toString();
         });
       });
+
+      // --- 4. NOVOS EVENTOS DE SELEÇÃO ---
+      if (selectAll) {
+          selectAll.addEventListener('change', function() {
+              checkboxes.forEach(cb => cb.checked = selectAll.checked);
+              updateUI();
+          });
+      }
+
+      checkboxes.forEach(cb => {
+          cb.addEventListener('change', updateUI);
+      });
+
+      if (btnDeleteSelected) {
+          btnDeleteSelected.addEventListener('click', function() {
+              const selectedIds = Array.from(document.querySelectorAll('.disciplina-checkbox:checked'))
+                                       .map(cb => cb.value);
+              
+              if (confirm(`Tem certeza que deseja excluir a(s) ${selectedIds.length} disciplina(s) selecionada(s)?`)) {
+                  bulkInput.value = selectedIds.join(',');
+                  bulkForm.submit();
+              }
+          });
+      }
     });
 </script>
 {% endblock %}

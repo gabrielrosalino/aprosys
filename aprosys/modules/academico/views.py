@@ -162,21 +162,33 @@ def aluno_form_view(request, aluno_id=None):
 #endregion ---
 
 #region --- DISCIPLINA - LORENA ---
+
+# View unificada para Cadastrar e Editar Disciplina. Suporta abertura via popup para campos relacionados.
 @role_required(['COORDENADOR'])
 @login_required
-def cadastrar_disciplina(request):
+def cadastrar_disciplina(request, disciplina_id=None):
+    
+    disciplina_instance = None
+    
+    if disciplina_id:
+        disciplina_instance = get_object_or_404(Disciplina, pk=disciplina_id)
+
     if request.method == 'POST':
-        form = DisciplinaForm(request.POST)
+        form = DisciplinaForm(request.POST, instance=disciplina_instance)
         if form.is_valid():
-            form.save()
-            return redirect('cadastrar_disciplina')
+            disciplina = form.save()
+            acao = "atualizada" if disciplina_id else "criada"
+            messages.success(request, f'Disciplina "{disciplina.nome}" {acao} com êxito!')
+            return redirect('pesquisar_disciplina')
     else:
-        form = DisciplinaForm()
+        form = DisciplinaForm(instance=disciplina_instance)
+    
     return render(
         request,
         'academico/disciplinas/cadastrar_disciplina.html',
         {
             'form': form,
+            'disciplina': disciplina_instance, 
             'active_menu': 'disciplina',
         },
     )
@@ -229,6 +241,34 @@ def pesquisar_disciplina(request):
             'active_menu': 'disciplinas',
         },
     )
+
+
+# Exclui uma disciplina específica do banco de dados e retorna    uma mensagem de confirmação
+@role_required(['COORDENADOR'])
+@login_required
+def excluir_disciplina(request, disciplina_id):
+    disciplina = get_object_or_404(Disciplina, pk=disciplina_id)
+    nome_disciplina = disciplina.nome
+    disciplina.delete()
+    
+    messages.success(request, f'Disciplina "{nome_disciplina}" excluída com sucesso!')
+    return redirect('pesquisar_disciplina')
+
+
+# Recebe uma lista de IDs via POST e exclui as disciplinas correspondentes.
+@role_required(['COORDENADOR'])
+@login_required
+def excluir_disciplinas_massa(request):
+
+    if request.method == 'POST':
+        ids_raw = request.POST.get('disciplina_ids', '')
+        if ids_raw:
+            ids_list = ids_raw.split(',')
+            # O delete() retorna uma tupla, onde o primeiro item é a contagem
+            count = Disciplina.objects.filter(pk__in=ids_list).delete()[0]
+            messages.success(request, f'{count} disciplinas excluídas com sucesso!')
+    return redirect('pesquisar_disciplina')
+
 #endregion ---
 
 #region --- PERÍODO LETIVO --- 

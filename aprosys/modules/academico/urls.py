@@ -14,7 +14,8 @@ urlpatterns = [
     ),
     path('accounts/logout/', LogoutView.as_view(), name='logout'),
     path('home/', views.home, name='home'),
-    # --------- Alunos ----------
+    
+    # ---------- Alunos ----------
     path(
         'academico/alunos/pesquisar/',
         views.pesquisar_aluno,
@@ -44,6 +45,15 @@ urlpatterns = [
         views.pesquisar_disciplina,
         name='pesquisar_disciplina',
     ),
+    path (
+        'academico/disciplinas/editar/<int:disciplina_id>/', views.cadastrar_disciplina, name='editar_disciplina'
+    ),
+    path(
+        'disciplinas/excluir/<int:disciplina_id>/', views.excluir_disciplina, name='excluir_disciplina'
+    ),
+    path('disciplinas/excluir-massa/', views.excluir_disciplinas_massa, name='excluir_disciplinas_massa'
+    ),  
+    
     # --------- Período Letivo ----------
     path(
         'academico/periodos/cadastrar/',
@@ -55,6 +65,7 @@ urlpatterns = [
         views.pesquisar_periodo,
         name='pesquisar_periodo',
     ),
+    
     # --------- Turmas ----------
     path(
         'academico/turmas/cadastrar/',
@@ -66,6 +77,7 @@ urlpatterns = [
         views.pesquisar_turma,
         name='pesquisar_turma',
     ),
+    
     # --------- Voluntários ----------
     path(
         'academico/voluntarios/cadastrar/',
@@ -77,6 +89,7 @@ urlpatterns = [
         views.pesquisar_voluntario,
         name='pesquisar_voluntario',
     ),
+    
     # --------- Cursos ----------
     path(
         'academico/cursos/cadastrar/',

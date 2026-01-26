@@ -25,7 +25,7 @@
     </div>
   {% endif %}
 
-  <form method="post" action="{% url 'cadastrar_disciplina' %}" id="disciplina-form">
+  <form method="post" action="{% if disciplina %}{% url 'editar_disciplina' disciplina.pk %}{% else %}{% url 'cadastrar_disciplina' %}{% endif %}" id="disciplina-form">
     {% csrf_token %}
 
     <fieldset class="chart-container">
@@ -54,10 +54,18 @@
 
       </div>
     </fieldset>
-
+ 
     <div class="btn_wrapper">
-      <button type="submit" class="btn btn-save">Cadastrar</button>
-      <button type="reset" class="btn btn-cancel">Cancelar</button>
+      {% if not visualizar %}
+        <button type="submit" class="btn btn-save">
+          {% if disciplina %}Salvar Alterações{% else %}Cadastrar{% endif %}
+        </button>
+      {% endif %}
+      
+      <button type="button" class="btn btn-cancel"
+        onclick="{% if disciplina %}window.history.back(){% else %}window.location.href='{% url 'home' %}'{% endif %};">
+        {% if visualizar %}Voltar{% else %}Cancelar{% endif %}
+      </button>
     </div>
   </form>
 {% endblock %}
