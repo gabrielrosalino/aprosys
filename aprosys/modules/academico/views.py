@@ -231,7 +231,7 @@ def pesquisar_disciplina(request):
     )
 #endregion
 
-#region DISCIPLINA - 
+#region PERÍODO LETIVO - 
 @role_required(['COORDENADOR'])
 @login_required
 def cadastrar_periodo(request):
@@ -244,6 +244,49 @@ def cadastrar_periodo(request):
         form = PeriodoLetivoForm()
     return render(
         request, 'academico/periodos/cadastrar_periodo.html', {'form': form}
+    )
+
+@role_required(['COORDENADOR'])
+@login_required
+def pesquisar_periodo(request):
+    q = request.GET.get('q', '').strip()
+    periodos = PeriodoLetivo.objects.all()
+
+    if q:
+        # Permite buscar por nome, ano ou semestre
+        periodos = periodos.filter(
+            Q(nome__icontains=q)
+            | Q(ano__icontains=q)
+            | Q(semestre__icontains=q)
+        )
+
+    allowed_fields = {
+        'nome': 'nome',
+        'ano': 'ano',
+        'semestre': 'semestre',
+        'data_inicio': 'data_inicio',
+        'data_fim': 'data_fim',
+        'status': 'status',
+    }
+    order = request.GET.get('order', 'nome')
+    direction = request.GET.get('dir', 'asc')
+
+    if order not in allowed_fields:
+        order = 'nome'
+
+    prefix = '' if direction == 'asc' else '-'
+    periodos = periodos.order_by(f'{prefix}{allowed_fields[order]}')
+
+    return render(
+        request,
+        'academico/periodos/pesquisar_periodo.html',
+        {
+            'periodos': periodos,
+            'q': q,
+            'order': order,
+            'dir': direction,
+            'active_menu': 'periodo',
+        },
     )
 #endregion
 
@@ -400,51 +443,6 @@ def informacoes_curso(request, pk):
         'curso': curso,
         'visualizar': True 
     })
-#endregion
-
-#region PERÍODO LETIVO - ????
-@role_required(['COORDENADOR'])
-@login_required
-def pesquisar_periodo(request):
-    q = request.GET.get('q', '').strip()
-    periodos = PeriodoLetivo.objects.all()
-
-    if q:
-        # Permite buscar por nome, ano ou semestre
-        periodos = periodos.filter(
-            Q(nome__icontains=q)
-            | Q(ano__icontains=q)
-            | Q(semestre__icontains=q)
-        )
-
-    allowed_fields = {
-        'nome': 'nome',
-        'ano': 'ano',
-        'semestre': 'semestre',
-        'data_inicio': 'data_inicio',
-        'data_fim': 'data_fim',
-        'status': 'status',
-    }
-    order = request.GET.get('order', 'nome')
-    direction = request.GET.get('dir', 'asc')
-
-    if order not in allowed_fields:
-        order = 'nome'
-
-    prefix = '' if direction == 'asc' else '-'
-    periodos = periodos.order_by(f'{prefix}{allowed_fields[order]}')
-
-    return render(
-        request,
-        'academico/periodos/pesquisar_periodo.html',
-        {
-            'periodos': periodos,
-            'q': q,
-            'order': order,
-            'dir': direction,
-            'active_menu': 'periodo',
-        },
-    )
 #endregion
 
 #region TURMAS - 
