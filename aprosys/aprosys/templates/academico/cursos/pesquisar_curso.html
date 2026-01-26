@@ -196,7 +196,7 @@
                 const selectedIds = Array.from(document.querySelectorAll('.course-checkbox:checked'))
                                          .map(cb => cb.value);
                 
-                if (confirm(`Tem certeza que deseja excluir os ${selectedIds.length} cursos selecionados?`)) {
+                if (confirm(`Tem certeza que deseja excluir o(s) ${selectedIds.length} curso(s) selecionado(s)?`)) {
                     bulkInput.value = selectedIds.join(',');
                     bulkForm.submit();
                 }
