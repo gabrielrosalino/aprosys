@@ -26,7 +26,7 @@ from .models import (
     Voluntario,
 )
 
-#region UTILITÁRIOS, AUTENTICAÇÃO E NAVEGAÇÃO BASE -  
+#region --- UTILITÁRIOS, AUTENTICAÇÃO E NAVEGAÇÃO BASE ---  
 
 # Decorator personalizado para restringir o acesso a views com base no tipo de voluntário
 def role_required(allowed_roles):
@@ -65,9 +65,9 @@ def user_registration(request):
 @login_required
 def home(request):
     return render(request, 'academico/home.html')
-#endregion
+#endregion ---
 
-#region ALUNOS - ANDERSON
+#region --- ALUNOS - ANDERSON ---
 @login_required
 def pesquisar_aluno(request):
     query = request.GET.get('q', '')
@@ -159,9 +159,9 @@ def aluno_form_view(request, aluno_id=None):
         'active_menu': 'alunos'
     }
     return render(request, 'academico/alunos/aluno_form.html', context)
-#endregion
+#endregion ---
 
-#region DISCIPLINA - LORENA
+#region --- DISCIPLINA - LORENA ---
 @role_required(['COORDENADOR'])
 @login_required
 def cadastrar_disciplina(request):
@@ -229,9 +229,9 @@ def pesquisar_disciplina(request):
             'active_menu': 'disciplinas',
         },
     )
-#endregion
+#endregion ---
 
-#region PERÍODO LETIVO - 
+#region --- PERÍODO LETIVO --- 
 @role_required(['COORDENADOR'])
 @login_required
 def cadastrar_periodo(request):
@@ -288,15 +288,17 @@ def pesquisar_periodo(request):
             'active_menu': 'periodo',
         },
     )
-#endregion
+#endregion ---
 
-#region CURSOS - LORENA
+#region --- CURSOS - LORENA ---
+
+# View unificada para Cadastrar e Editar Cursos. Suporta abertura via popup para campos relacionados.
 @role_required(['COORDENADOR'])
 @login_required
-def curso_form_view(request, curso_id=None): # Nome alterado para seguir o padrão
+def cadastrar_curso(request, curso_id=None):
     field_name = request.GET.get('field_name') or request.POST.get('field_name')
     
-    # Busca o curso se houver ID, senão cria um novo
+    # Busca a instância para edição ou inicia como None para novo cadastro
     curso_instance = None
     if curso_id:
         curso_instance = get_object_or_404(Curso, pk=curso_id)
@@ -306,7 +308,7 @@ def curso_form_view(request, curso_id=None): # Nome alterado para seguir o padr�
         if form.is_valid():
             curso = form.save()
             
-            # Lógica para quando o curso é cadastrado via popup (janela filha)
+            # Lógica para fechamento automático se for aberto via popup
             if field_name:
                 return HttpResponse(f"""
                     <script>
@@ -320,12 +322,14 @@ def curso_form_view(request, curso_id=None): # Nome alterado para seguir o padr�
                         }}
                         setTimeout(function() {{ window.close(); }}, 100);
                     </script>
-                    <div style='padding: 20px; text-align: center;'>
+                    <div style='padding: 20px; text-align: center; font-family: sans-serif;'>
                         <h3>Curso salvo com sucesso!</h3>
+                        <p>Esta janela será fechada automaticamente.</p>
                     </div>
                 """)
             
-            messages.success(request, f'Curso {"atualizado" if curso_id else "cadastrado"} com sucesso!')
+            acao = "atualizado" if curso_id else "cadastrado"
+            messages.success(request, f'Curso "{curso.nome}" {acao} com sucesso!')
             return redirect('pesquisar_curso')
     else:
         form = CursoForm(instance=curso_instance)
@@ -333,75 +337,30 @@ def curso_form_view(request, curso_id=None): # Nome alterado para seguir o padr�
     return render(
         request,
         'academico/cursos/cadastrar_curso.html',
-        {'form': form, 'field_name': field_name, 'curso': curso_instance},
-    )
-    field_name = request.GET.get('field_name') or request.POST.get(
-        'field_name'
-    )
-
-    if request.method == 'POST':
-        form = CursoForm(request.POST)
-        if form.is_valid():
-            curso = form.save()
-
-            if field_name:
-                return HttpResponse(f"""
-                    <script>
-                        if (window.opener) {{
-                            window.opener.postMessage({{
-                                type: 'add_related',
-                                name: '{field_name}',
-                                value: '{curso.id_curso}',
-                                text: '{curso.nome.replace("'", "\\'")}'
-                            }}, '*');
-                        }}
-                        setTimeout(function() {{
-                            window.close();
-                        }}, 100);
-                    </script>
-                    <div style='padding: 20px; text-align: center;'>
-                        <h3>Curso cadastrado com sucesso!</h3>
-                        <p>Esta aba será fechada automaticamente.</p>
-                    </div>
-                """)
-            else:
-                return redirect('pesquisar_curso')
-        else:
-            return render(
-                request,
-                'academico/cursos/cadastrar_curso.html',
-                {'form': form, 'field_name': field_name},
-            )
-
-    else:
-        form = CursoForm()
-        print(f'DEBUG - GET request, field_name: {field_name}')
-
-    return render(
-        request,
-        'academico/cursos/cadastrar_curso.html',
-        {'form': form, 'field_name': field_name},
+        {
+            'form': form, 
+            'field_name': field_name, 
+            'curso': curso_instance,
+            'active_menu': 'cursos'
+        }
     )
 
+
+# Lista os cursos com suporte a busca por nome e ordenação.
 @login_required
 def pesquisar_curso(request):
+
     q = request.GET.get('q', '').strip()
     cursos = Curso.objects.all()
 
     if q:
         cursos = cursos.filter(Q(nome__icontains=q))
 
-    allowed_fields = {
-        'nome': 'nome',
-    }
     order = request.GET.get('order', 'nome')
     direction = request.GET.get('dir', 'asc')
-
-    if order not in allowed_fields:
-        order = 'nome'
-
     prefix = '' if direction == 'asc' else '-'
-    cursos = cursos.order_by(f'{prefix}{allowed_fields[order]}')
+    
+    cursos = cursos.order_by(f'{prefix}{order}')
 
     return render(
         request,
@@ -412,40 +371,56 @@ def pesquisar_curso(request):
             'order': order,
             'dir': direction,
             'active_menu': 'cursos',
-        },
+        }
     )
 
+
+# Exclui um curso individualmente.
 @role_required(['COORDENADOR'])
 @login_required
 def excluir_curso(request, curso_id):
+
     curso = get_object_or_404(Curso, pk=curso_id)
     nome_curso = curso.nome
     curso.delete()
     messages.success(request, f'Curso "{nome_curso}" excluído com sucesso!')
     return redirect('pesquisar_curso')
 
+
+# Exclui múltiplos cursos selecionados via checkbox.
 @role_required(['COORDENADOR'])
 @login_required
 def excluir_cursos_massa(request):
+
     if request.method == 'POST':
         ids_raw = request.POST.get('curso_ids', '')
         if ids_raw:
             ids_list = ids_raw.split(',')
-            Curso.objects.filter(pk__in=ids_list).delete()
-            messages.success(request, f'{len(ids_list)} cursos excluídos com sucesso!')
+            count = Curso.objects.filter(pk__in=ids_list).delete()[0]
+            messages.success(request, f'{count} cursos excluídos com sucesso!')
     return redirect('pesquisar_curso')
 
+
+# Exibe os detalhes de um curso em modo somente leitura (visualizar).
 @login_required
 def informacoes_curso(request, pk):
+
+    curso = get_object_or_404(Curso, pk=pk)
+    return render(request, 'academico/cursos/cadastrar_curso.html', {
+        'curso': curso,
+        'visualizar': True,
+        'active_menu': 'cursos'
+    })
     curso = get_object_or_404(Curso, pk=pk)
     # Passamos o objeto curso e uma flag 'visualizar' como True
     return render(request, 'academico/cursos/cadastrar_curso.html', {
         'curso': curso,
         'visualizar': True 
     })
-#endregion
 
-#region TURMAS - 
+#endregion  ---
+
+#region --- TURMAS --- 
 @role_required(['COORDENADOR'])
 @login_required
 def cadastrar_turma(request):
@@ -515,9 +490,9 @@ def pesquisar_turma(request):
             'active_menu': 'turmas',
         },
     )
-#endregion
+#endregion ---
 
-#region VOLUNTÁRIOS - 
+#region --- VOLUNTÁRIOS --- 
 @role_required(['COORDENADOR'])
 @login_required
 def cadastrar_voluntario(request):
@@ -572,4 +547,4 @@ def pesquisar_voluntario(request):
     return render(
         request, 'academico/voluntarios/pesquisar_voluntario.html', context
     )
-#endregion
+#endregion ---
