@@ -1,10 +1,12 @@
 /* search_tables.css */
 
+@import url('style.css');
+
 /* --------------------------------------------------
                     BARRA DE PESQUISA
 -------------------------------------------------- */
 .search-container-table {
-    max-width: 300px;
+    max-width: 400px;
     margin-block-start: 40px;
     margin-block-end: 20px;
 }
@@ -23,7 +25,7 @@ table {
 }
 
 th, td {
-    padding: 12px 15px; /* Aumentado levemente para melhor leitura */
+    padding: 12px 15px; 
 }
 
 th {
@@ -45,7 +47,6 @@ td {
     vertical-align: middle;
 }
 
-/* Estilo para links de texto dentro da tabela */
 td a, td a:visited {
     text-decoration: none;
     color: inherit;
@@ -63,14 +64,11 @@ tbody tr:last-child td {
 /* --------------------------------------------------
                 AÇÕES DO CRUD (Botões e Destaque)
 -------------------------------------------------- */
-
-/* Centraliza as colunas de ação */
 .table-action-cell {
     text-align: center !important;
     width: 80px;
 }
 
-/* Tamanho padronizado para os ícones SVG */
 .edit-button, 
 .delete-button {
     display: inline-block;
@@ -82,26 +80,24 @@ tbody tr:last-child td {
 }
 
 .edit-button:hover {
-    color: var(--secondary-color); /* Turquesa do sistema */
+    color: var(--secondary-color); 
     transform: scale(1.1);
 }
 
 .delete-button:hover {
-    color: #ff4d4d; /* Vermelho para exclusão */
+    color: #ff4d4d; 
     transform: scale(1.1);
 }
 
-/* Garante que o SVG preencha o container de 20px */
 .table-action-cell a svg {
     width: 100%;
     height: 100%;
 }
 
-/* Destaque visual da linha selecionada */
 tr.row-selected td {
     font-weight: bold !important;
-    color: var(--primary-color) !important; /* Azul escuro do menu */
-    background-color: #f0f7f7 !important; /* Fundo turquesa clarinho */
+    color: var(--primary-color) !important;
+    background-color: #f0f7f7 !important;
 }
 
 .table-empty-message {
@@ -111,8 +107,7 @@ tr.row-selected td {
     font-style: italic;
 }
 
-/* Estilo para os checkboxes na tabela */
-.course-checkbox, #select-all-courses {
+.course-checkbox, .disciplina-checkbox, #select-all-courses, #select-all-disciplinas {
     cursor: pointer;
     width: 16px;
     height: 16px;
@@ -120,10 +115,130 @@ tr.row-selected td {
 }
 
 /* --------------------------------------------------
-                MEDIA QUERIES
+    LIMPEZA DE ELEMENTOS (CONTROLE DE VISIBILIDADE)
 -------------------------------------------------- */
-@media (max-width: 768px) {
-    .search-container-table {
-        max-width: 100%;
+
+/* 1. Esconde a interface mobile por padrão (Garante Desktop limpo) */
+.mobile-filter-container,
+.mobile-list-interface {
+    display: none !important;
+}
+
+/* 2. Garante que a tabela desktop apareça em telas grandes */
+@media screen and (min-width: 769px) {
+    .d-none.d-md-block {
+        display: block !important;
+    }
+}
+
+/* --------------------------------------------------
+            INTERFACE DE PESQUISA MOBILE
+-------------------------------------------------- */
+@media screen and (max-width: 768px) {
+    
+    /* 1. FORÇAR O SUMIÇO DA TABELA DESKTOP NO MOBILE */
+    .d-none.d-md-block,
+    .search-container-table table { 
+        display: none !important; 
+    }
+
+    /* 2. REATIVAR A INTERFACE MOBILE (FORÇANDO VISIBILIDADE) */
+    .mobile-filter-container,
+    .mobile-list-interface {
+        display: block !important; /* ISSO TRAZ A LISTA DE VOLTA */
+    }
+
+    .mobile-filter-container {
+        margin: 10px 0 25px 0 !important;
+    }
+
+    .mobile-filter-wrapper {
+        display: flex !important;
+        justify-content: center !important;
+        gap: 12px !important;
+    }
+
+    /* 3. ESTILO DAS PÍLULAS E GRUPOS */
+    .filter-btn {
+        padding: 8px 20px !important;
+        border-radius: 25px !important;
+        border: 2px solid #00a896 !important;
+        background: white !important;
+        color: #00a896 !important;
+        font-weight: 600 !important;
+        font-size: 14px !important;
+        cursor: pointer;
+    }
+
+    .filter-btn.active {
+        background: #00a896 !important;
+        color: white !important;
+    }
+
+    .group-header {
+        color: #00a896 !important;
+        font-weight: bold !important;
+        border-bottom: 2px solid #00a896 !important;
+        padding-bottom: 8px !important;
+        margin-top: 25px !important;
+        display: flex !important;
+        justify-content: space-between !important;
+    }
+
+    /* 4. LINHAS E AÇÕES (GAP E SEM SUBRLINHADO) */
+    .mobile-item-row {
+        display: flex !important;
+        align-items: center !important;
+        padding: 15px 5px !important;
+        border-bottom: 1px solid #eee !important;
+    }
+
+    .item-name {
+        flex-grow: 1 !important;
+        margin-left: 12px !important;
+        color: var(--text-color-dark) !important; 
+        font-weight: 400 !important;
+        font-size: 1em !important;
+    }
+
+    .item-actions {
+        display: flex !important;
+        gap: 18px !important; /* Espaço entre ícones */
+        align-items: center !important;
+    }
+
+    .item-actions a {
+        text-decoration: none !important; /* Remove linha embaixo */
+        display: flex !important;
+    }
+
+    /* 5. ESTADOS DE SELEÇÃO E FAB */
+    .mobile-item-row.item-selected .item-name {
+        color: #004a7c !important; 
+        font-weight: 700 !important;
+    }
+
+    .mobile-item-row.item-selected {
+        background-color: #f0f7f7 !important;
+    }
+
+    .fab-delete, #mobile-fab-delete {
+    position: fixed !important;
+    bottom: 30px !important;
+    right: 25px !important;
+    width: 60px !important;
+    height: 60px !important;
+    background-color: #ec221f !important;
+    border-radius: 50% !important;
+    z-index: 9999 !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    cursor: pointer;
+    }
+
+    .fab-delete svg {
+        width: 30px;
+        height: 30px;
+        fill: white !important;
+        margin: auto;
     }
 }

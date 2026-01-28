@@ -4,19 +4,23 @@
 {% block title %}Aprova System | Pesquisar Curso {% endblock %}
 
 {% block content %}
+
+<!-- --------- TÍTULO DA PÁGINA (DK + MB) --------- -->
 <div class="report-header">
     <h3 class="report-subtitle">Pesquisar</h3>
     <h1 class="report-title">Curso</h1>
 </div>
 
-<div style="display: flex; align-items: center; justify-content: space-between; margin-top: 40px; margin-bottom: 20px; min-height: 45px;">
+<!-- --------- CAMPO DE PESQUISA EM TABELAS + BOTÃO DE EXCLUSÃO EM MASSA --------- -->
+<div style="display: flex; align-items: center; justify-content:space-between; margin-top: 40px; margin-bottom: 20px; min-height: 45px;">
     
+    <!-- CAMPO DE PESQUISA (DK + MB) -->
     <form
         id="search-form"
         action="{% url 'pesquisar_curso' %}"
         method="get"
         class="search-container search-container-table"
-        style="margin: 0; flex-grow: 1; max-width: 300px;"
+        style="margin: 0; flex-grow: 1;"
     >
         <input
             id="search-input"
@@ -34,6 +38,7 @@
         >&times;</button>
     </form>
 
+    <!-- BOTÃO DE EXCLUSÃO MÚLTIPLA (DK + MB) -->
     <div id="bulk-actions-container" style="visibility: hidden; margin-left: 20px;">
         <button type="button" id="btn-delete-selected" class="btn btn-cancel" style="margin: 0; white-space: nowrap;">
             Excluir Selecionados
@@ -41,6 +46,7 @@
     </div>
 </div>
 
+<!-- --------- TABELA DE CURSOS (DK + MB) --------- -->
 <table>
     <thead>
         <tr>
@@ -91,6 +97,7 @@
     </tbody>
 </table>
 
+<!-- --------- FORMULÁRIO DE EXCLUSÃO MÚLTIPLA - BACKEND (DK + MB) --------- -->
 <form id="bulk-delete-form" action="{% url 'excluir_cursos_massa' %}" method="POST" style="display: none;">
     {% csrf_token %}
     <input type="hidden" name="curso_ids" id="curso-ids-input">

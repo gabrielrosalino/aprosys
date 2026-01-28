@@ -4,173 +4,316 @@
 {% block title %}Aprova System | Pesquisar Disciplina {% endblock %}
 
 {% block content %}
-<div class="report-header">
-    <h3 class="report-subtitle">Pesquisar</h3>
-    <h1 class="report-title">Disciplina</h1>
-</div>
 
-<div style="display: flex; align-items: center; justify-content: space-between; margin-top: 40px; margin-bottom: 20px; min-height: 45px;">
-    
-    <form id="search-form" action="{% url 'pesquisar_disciplina' %}" method="get" 
-          class="search-container search-container-table" style="margin: 0; flex-grow: 1; max-width: 300px;">
-        <input id="search-input" type="text" name="q" placeholder="Pesquise por uma disciplina" value="{{ q|urlencode }}" autocomplete="off">
-        <button id="clear-btn" type="button" class="clear-button" aria-label="Limpar pesquisa">&times;</button>
+    <!-- --------- TÍTULO DA PÁGINA (DK + MB) --------- -->
+    <div class="report-header">
+        <h3 class="report-subtitle">Pesquisar</h3>
+        <h1 class="report-title">Disciplina</h1>
+    </div>
+
+    <!-- --------- CAMPO DE PESQUISA EM TABELAS + BOTÃO DE EXCLUSÃO EM MASSA --------- -->
+    <div style="display: flex; align-items: center; justify-content:space-between; margin-top: 40px; margin-bottom: 20px; min-height: 45px;">
+        
+        <!-- CAMPO DE PESQUISA (DK + MB) -->
+        <form id="search-form" action="{% url 'pesquisar_disciplina' %}" method="get" 
+            class="search-container search-container-table" style="margin: 0; flex-grow: 1; max-width: 300px;">
+            <input id="search-input" type="text" name="q" placeholder="Pesquise por uma disciplina" value="{{ q|urlencode }}" autocomplete="off">
+            <button id="clear-btn" type="button" class="clear-button" aria-label="Limpar pesquisa">&times;</button>
+        </form>
+
+        <!-- BOTÃO DE EXCLUSÃO MÚLTIPLA (DK + MB) -->
+        <div id="bulk-actions-container" style="visibility: hidden; margin-left: 20px;">
+            <button type="button" id="btn-delete-selected" class="btn btn-cancel" style="margin: 0; white-space: nowrap;">
+                Excluir Selecionadas
+            </button>
+        </div>
+    </div>
+
+    <!-- --------- BOTÕES DE FILTRO DE PESQUISA (DK + MB) --------- -->
+    <div class="d-md-none mobile-filter-container">
+        <div class="mobile-filter-wrapper">
+            <button type="button" class="filter-btn active" id="filter-status">Status</button>
+            <button type="button" class="filter-btn" id="filter-area">Área de Conhecimento</button>
+        </div>
+    </div>
+
+    <!-- --------- TABELA DE DISCIPLINAS (DK) --------- -->
+    <div class="d-none d-md-block">
+        <table>
+
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="select-all-disciplinas"></th>
+                    <th class="sortable" data-field="nome">
+                        <span>Disciplina</span>
+                        {% if order == 'nome' %}
+                            <span>{% if dir == 'asc' %}▲{% else %}▼{% endif %}</span>
+                        {% endif %}
+                    </th>
+                    <th class="sortable" data-field="area_conhecimento">
+                        <span>Área de Conhecimento</span>
+                        {% if order == 'area_conhecimento' %}
+                            <span>{% if dir == 'asc' %}▲{% else %}▼{% endif %}</span>
+                        {% endif %}
+                    </th>
+                    <th class="sortable" data-field="status">
+                        <span>Status</span>
+                        {% if order == 'status' %}
+                            <span>{% if dir == 'asc' %}▲{% else %}▼{% endif %}</span>
+                        {% endif %}
+                    </th>
+                    <th class="table-action-cell"><span>Editar</span></th>
+                    <th class="table-action-cell"><span>Excluir</span></th>
+                </tr>
+            </thead>
+            
+            <tbody>
+                {% if disciplinas %}
+                    {% for disciplina in disciplinas %}
+                        <tr>
+                            <td><input type="checkbox" class="disciplina-checkbox" value="{{ disciplina.pk }}"></td>
+                            <td>{{ disciplina.nome }}</td>
+                            <td>{{ disciplina.get_area_conhecimento_display }}</td>
+                            <td>{{ disciplina.get_status_display }}</td>
+                            <td class="table-action-cell">
+                                <a href="{% url 'editar_disciplina' disciplina.pk %}">              
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" class="edit-button">
+                                        <path fill="currentColor" d="M439.5 107.8C447.1 100.2 457.3 96 468 96C478.7 96 488.9 100.2 496.5 107.8L532.2 143.5C539.8 151.1 544 161.3 544 172C544 182.7 539.8 192.9 532.2 200.5L473.7 259L381 166.3L439.5 107.8zM358.3 189L451 281.7L238.2 494.4C231.4 501.2 222.9 506.2 213.6 508.8L99.5 540.5L131.2 426.4C133.8 417.1 138.7 408.6 145.6 401.8L358.3 189zM468 64C448.8 64 430.4 71.6 416.9 85.2L122.9 379.2C112.2 389.9 104.4 403.3 100.3 417.9L64.9 545.6C62.6 553.9 64.9 562.9 71.1 569C77.3 575.1 86.2 577.5 94.5 575.2L222.3 539.7C236.9 535.6 250.2 527.9 261 517.1L555 223.1C568.4 209.6 576 191.2 576 172C576 152.8 568.4 134.4 554.8 120.9L519.1 85.2C505.6 71.6 487.2 64 468 64z"/>
+                                    </svg>
+                                </a>
+                            </td>
+                            <td class="table-action-cell">
+                                <a href="{% url 'excluir_disciplina' disciplina.pk %}" onclick="return confirm('Excluir {{ disciplina.nome }}?');">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="delete-button">
+                                        <path fill="currentColor" d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/>
+                                    </svg>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6">Nenhuma disciplina encontrada.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- --------- TABELA DE DISCIPLINAS (MB) --------- -->
+    <div class="d-md-none mobile-list-interface">
+        <div id="mobile-list-content">
+            <div class="mobile-group">
+                <h4 class="group-header">Ativo <span class="sort-icon">▼</span></h4>
+                {% for disciplina in disciplinas %}
+                    {% if disciplina.status == 1 or disciplina.status == '1' or disciplina.status == True %}
+                    <div class="mobile-item-row">
+                        <input type="checkbox" class="disciplina-checkbox" value="{{ disciplina.pk }}">
+                        <span class="item-name">{{ disciplina.nome }}</span>
+                        <div class="item-actions">
+                            <a href="{% url 'editar_disciplina' disciplina.pk %}">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" class="edit-button">
+                                    <path fill="currentColor" d="M439.5 107.8C447.1 100.2 457.3 96 468 96C478.7 96 488.9 100.2 496.5 107.8L532.2 143.5C539.8 151.1 544 161.3 544 172C544 182.7 539.8 192.9 532.2 200.5L473.7 259L381 166.3L439.5 107.8zM358.3 189L451 281.7L238.2 494.4C231.4 501.2 222.9 506.2 213.6 508.8L99.5 540.5L131.2 426.4C133.8 417.1 138.7 408.6 145.6 401.8L358.3 189zM468 64C448.8 64 430.4 71.6 416.9 85.2L122.9 379.2C112.2 389.9 104.4 403.3 100.3 417.9L64.9 545.6C62.6 553.9 64.9 562.9 71.1 569C77.3 575.1 86.2 577.5 94.5 575.2L222.3 539.7C236.9 535.6 250.2 527.9 261 517.1L555 223.1C568.4 209.6 576 191.2 576 172C576 152.8 568.4 134.4 554.8 120.9L519.1 85.2C505.6 71.6 487.2 64 468 64z"></path>
+                                </svg>
+                            </a>
+                            <a href="{% url 'excluir_disciplina' disciplina.pk %}" onclick="return confirm('Excluir?');">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="delete-button">
+                                    <path fill="currentColor" d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <div class="mobile-group">
+                <h4 class="group-header">Inativo <span class="sort-icon">▼</span></h4>
+                {% for disciplina in disciplinas %}
+                    {% if disciplina.status == 0 or disciplina.status == '0' or disciplina.status == False %}
+                    <div class="mobile-item-row">
+                        <input type="checkbox" class="disciplina-checkbox" value="{{ disciplina.pk }}">
+                        <span class="item-name">{{ disciplina.nome }}</span>
+                        <div class="item-actions">
+                            <a href="{% url 'editar_disciplina' disciplina.pk %}">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" class="edit-button">
+                                    <path fill="currentColor" d="M439.5 107.8C447.1 100.2 457.3 96 468 96C478.7 96 488.9 100.2 496.5 107.8L532.2 143.5C539.8 151.1 544 161.3 544 172C544 182.7 539.8 192.9 532.2 200.5L473.7 259L381 166.3L439.5 107.8zM358.3 189L451 281.7L238.2 494.4C231.4 501.2 222.9 506.2 213.6 508.8L99.5 540.5L131.2 426.4C133.8 417.1 138.7 408.6 145.6 401.8L358.3 189zM468 64C448.8 64 430.4 71.6 416.9 85.2L122.9 379.2C112.2 389.9 104.4 403.3 100.3 417.9L64.9 545.6C62.6 553.9 64.9 562.9 71.1 569C77.3 575.1 86.2 577.5 94.5 575.2L222.3 539.7C236.9 535.6 250.2 527.9 261 517.1L555 223.1C568.4 209.6 576 191.2 576 172C576 152.8 568.4 134.4 554.8 120.9L519.1 85.2C505.6 71.6 487.2 64 468 64z"></path>
+                                </svg>
+                            </a>
+                            <a href="{% url 'excluir_disciplina' disciplina.pk %}" onclick="return confirm('Excluir?');">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="delete-button">
+                                    <path fill="currentColor" d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTÃO DE EXCLUSÃO MÚLTIPLA (MB) -->
+    <div id="mobile-fab-delete" class="fab-delete d-md-none" style="display: none;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon-white">
+            <path fill="white" d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/>
+        </svg>
+    </div>
+
+    <!-- --------- FORMULÁRIO DE EXCLUSÃO MÚLTIPLA - BACKEND (DK + MB) --------- -->
+    <form id="bulk-delete-form" action="{% url 'excluir_disciplinas_massa' %}" method="POST" style="display: none;">
+        {% csrf_token %}
+        <input type="hidden" name="disciplina_ids" id="disciplina-ids-input">
     </form>
 
-    <div id="bulk-actions-container" style="visibility: hidden; margin-left: 20px;">
-        <button type="button" id="btn-delete-selected" class="btn btn-cancel" style="margin: 0; white-space: nowrap;">
-            Excluir Selecionadas
-        </button>
-    </div>
-</div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- 1. Seleção de Elementos ---
+            const searchForm = document.getElementById('search-form');
+            const searchInput = document.getElementById('search-input');
+            const clearBtn = document.getElementById('clear-btn');
+            
+            const selectAll = document.getElementById('select-all-disciplinas');
+            const checkboxes = document.querySelectorAll('.disciplina-checkbox');
+            const bulkContainer = document.getElementById('bulk-actions-container');
+            const btnDeleteSelected = document.getElementById('btn-delete-selected');
+            const bulkForm = document.getElementById('bulk-delete-form');
+            const bulkInput = document.getElementById('disciplina-ids-input');
 
-<table>
-    <thead>
-        <tr>
-            <th><input type="checkbox" id="select-all-disciplinas"></th>
-            <th class="sortable" data-field="nome">
-                <span>Disciplina</span>
-                {% if order == 'nome' %}
-                    <span>{% if dir == 'asc' %}▲{% else %}▼{% endif %}</span>
-                {% endif %}
-            </th>
-            <th class="sortable" data-field="area_conhecimento">
-                <span>Área de Conhecimento</span>
-                {% if order == 'area_conhecimento' %}
-                    <span>{% if dir == 'asc' %}▲{% else %}▼{% endif %}</span>
-                {% endif %}
-            </th>
-            <th class="sortable" data-field="status">
-                <span>Status</span>
-                {% if order == 'status' %}
-                    <span>{% if dir == 'asc' %}▲{% else %}▼{% endif %}</span>
-                {% endif %}
-            </th>
-            <th class="table-action-cell"><span>Editar</span></th>
-            <th class="table-action-cell"><span>Excluir</span></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% if disciplinas %}
-            {% for disciplina in disciplinas %}
-                <tr>
-                    <td><input type="checkbox" class="disciplina-checkbox" value="{{ disciplina.pk }}"></td>
-                    <td>{{ disciplina.nome }}</td>
-                    <td>{{ disciplina.get_area_conhecimento_display }}</td>
-                    <td>{{ disciplina.get_status_display }}</td>
-                    <td class="table-action-cell">
-                        <a href="{% url 'editar_disciplina' disciplina.pk %}">              
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" class="edit-button">
-                                <path fill="currentColor" d="M439.5 107.8C447.1 100.2 457.3 96 468 96C478.7 96 488.9 100.2 496.5 107.8L532.2 143.5C539.8 151.1 544 161.3 544 172C544 182.7 539.8 192.9 532.2 200.5L473.7 259L381 166.3L439.5 107.8zM358.3 189L451 281.7L238.2 494.4C231.4 501.2 222.9 506.2 213.6 508.8L99.5 540.5L131.2 426.4C133.8 417.1 138.7 408.6 145.6 401.8L358.3 189zM468 64C448.8 64 430.4 71.6 416.9 85.2L122.9 379.2C112.2 389.9 104.4 403.3 100.3 417.9L64.9 545.6C62.6 553.9 64.9 562.9 71.1 569C77.3 575.1 86.2 577.5 94.5 575.2L222.3 539.7C236.9 535.6 250.2 527.9 261 517.1L555 223.1C568.4 209.6 576 191.2 576 172C576 152.8 568.4 134.4 554.8 120.9L519.1 85.2C505.6 71.6 487.2 64 468 64z"/>
-                            </svg>
-                        </a>
-                    </td>
-                    <td class="table-action-cell">
-                        <a href="{% url 'excluir_disciplina' disciplina.pk %}" onclick="return confirm('Excluir {{ disciplina.nome }}?');">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="delete-button">
-                                <path fill="currentColor" d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/>
-                            </svg>
-                        </a>
-                    </td>
-                </tr>
-            {% endfor %}
-        {% else %}
-            <tr>
-                <td colspan="3">Nenhuma disciplina encontrada.</td>
-            </tr>
-        {% endif %}
-    </tbody>
-</table>
+            const btnFabDelete = document.getElementById('mobile-fab-delete');
 
-<form id="bulk-delete-form" action="{% url 'excluir_disciplinas_massa' %}" method="POST" style="display: none;">
-    {% csrf_token %}
-    <input type="hidden" name="disciplina_ids" id="disciplina-ids-input">
-</form>
+            // --- 2. Função de Atualização da Interface (Destaque Visual) ---
+            function updateUI() {
+                const checkedCount = document.querySelectorAll('.disciplina-checkbox:checked').length;
+                const isMobile = window.innerWidth <= 768; // Define o limite do mobile
 
-<script>
-    document.addEventListener('DOMContentLoaded', function(){
-      // --- 1. SEUS ELEMENTOS DE PESQUISA (MANTIDOS) ---
-      const form     = document.getElementById('search-form');
-      const input    = document.getElementById('search-input');
-      const clearBtn = document.getElementById('clear-btn');
-      const qParam   = "{{ q|escapejs }}";
-      let orderParam = "{{ order }}";
-      let dirParam   = "{{ dir }}";
+                // 2.1 Controle do Botão de Exclusão Desktop (DK)
+                if (bulkContainer) {
+                    // Só exibe se houver seleção E NÃO for mobile
+                    if (checkedCount > 0 && !isMobile) {
+                        bulkContainer.style.visibility = 'visible';
+                        bulkContainer.style.display = 'block';
+                    } else {
+                        bulkContainer.style.visibility = 'hidden';
+                    }
+                }
 
-      // --- 2. NOVOS ELEMENTOS DE SELEÇÃO EM MASSA ---
-      const selectAll = document.getElementById('select-all-disciplinas');
-      const checkboxes = document.querySelectorAll('.disciplina-checkbox');
-      const bulkContainer = document.getElementById('bulk-actions-container');
-      const btnDeleteSelected = document.getElementById('btn-delete-selected');
-      const bulkForm = document.getElementById('bulk-delete-form');
-      const bulkInput = document.getElementById('disciplina-ids-input');
+                // 2.2 Controle do Botão Flutuante Mobile (MB)
+                if (btnFabDelete) {
+                    // Só exibe se houver seleção E FOR mobile
+                    if (checkedCount > 0 && isMobile) {
+                        btnFabDelete.style.display = 'flex';
+                    } else {
+                        btnFabDelete.style.display = 'none';
+                    }
+                }
 
-      // Função para atualizar o visual e exibir o botão de excluir
-      function updateUI() {
-          const checkedCount = document.querySelectorAll('.disciplina-checkbox:checked').length;
-          
-          // Mostra o botão de excluir apenas se houver algo marcado
-          if (bulkContainer) {
-              bulkContainer.style.visibility = checkedCount > 0 ? 'visible' : 'hidden';
-          }
+                // 2.3 Lógica de Destaque Visual (DK + MB)
+                document.querySelectorAll('.disciplina-checkbox').forEach(cb => {
+                    // Tabela Desktop
+                    const row = cb.closest('tr');
+                    if (row) {
+                        if (cb.checked) row.classList.add('row-selected');
+                        else row.classList.remove('row-selected');
+                    }
 
-          // Destaca as linhas selecionadas
-          document.querySelectorAll('.disciplina-checkbox').forEach(cb => {
-              const row = cb.closest('tr');
-              if (cb.checked) row.classList.add('row-selected');
-              else row.classList.remove('row-selected');
-          });
-      }
+                    // Lista Mobile
+                    const mobileRow = cb.closest('.mobile-item-row');
+                    if (mobileRow) {
+                        if (cb.checked) mobileRow.classList.add('item-selected');
+                        else mobileRow.classList.remove('item-selected');
+                    }
+                });
+            }
 
-      // --- 3. SEUS EVENTOS DE PESQUISA (MANTIDOS) ---
-      input.addEventListener('keydown', e => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          form.submit();
-        }
-      });
+            // --- 3. Eventos de Pesquisa ---
+            if (searchInput && searchForm) {
+                searchInput.addEventListener('keydown', e => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        searchForm.submit();
+                    }
+                });
+            }
 
-      clearBtn.addEventListener('click', () => {
-        input.value = '';
-        form.submit();
-      });
+            if (clearBtn && searchInput && searchForm) {
+                clearBtn.addEventListener('click', () => {
+                    searchInput.value = '';
+                    searchForm.submit();
+                });
+            }
 
-      document.querySelectorAll('th.sortable').forEach(th => {
-        th.style.cursor = 'pointer';
-        th.addEventListener('click', () => {
-          const field = th.dataset.field;
-          let newDir = (field === orderParam && dirParam === 'asc') ? 'desc' : 'asc';
-          const params = new URLSearchParams();
-          if (qParam) params.set('q', qParam);
-          params.set('order', field);
-          params.set('dir', newDir);
-          window.location.search = params.toString();
+            // Ordenação das Colunas
+            document.querySelectorAll('th.sortable').forEach(th => {
+                th.addEventListener('click', () => {
+                    const field = th.dataset.field;
+                    const qParam = "{{ q|escapejs }}";
+                    let orderParam = "{{ order }}";
+                    let dirParam = "{{ dir }}";
+                    let newDir = (field === orderParam && dirParam === 'asc') ? 'desc' : 'asc';
+                    
+                    const params = new URLSearchParams();
+                    if (qParam) params.set('q', qParam);
+                    params.set('order', field);
+                    params.set('dir', newDir);
+                    window.location.search = params.toString();
+                });
+            });
+
+            // --- 4. Eventos de Seleção ---
+            // 4.1 Evento de igualar as caixinhas filhas à caixa "selecionar todos"
+            if (selectAll) {
+                selectAll.addEventListener('change', function() {
+                    checkboxes.forEach(cb => {
+                        cb.checked = selectAll.checked;
+                    });
+                    updateUI();
+                });
+            }
+
+            // 4.2 Evento para cada caixinha individual
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', function() {
+                    // Desmarca o "selecionar todos" se um item for desmarcado
+                    if (!this.checked && selectAll) selectAll.checked = false;
+                    
+                    // Marca o "selecionar todos" se todos os itens forem marcados manualmente
+                    const allChecked = document.querySelectorAll('.disciplina-checkbox:checked').length === checkboxes.length;
+                    if (allChecked && selectAll) selectAll.checked = true;
+                    
+                    updateUI();
+                });
+            });
+
+            // --- 5. Ação de Excluir Selecionados (Bulk Delete) ---
+            // --- 51. Definimos a função de exclusão uma única vez (DK + MB) ---
+            function executarExclusaoEmMassa() {
+                const selectedIds = Array.from(document.querySelectorAll('.disciplina-checkbox:checked'))
+                                        .map(cb => cb.value);
+                
+                if (selectedIds.length === 0) return;
+
+                if (confirm(`Tem certeza que deseja excluir a(s) ${selectedIds.length} disciplina(s) selecionada(s)?`)) {
+                    bulkInput.value = selectedIds.join(',');
+                    bulkForm.submit();
+                }
+            }
+
+            // --- 52. Atribuímos a função aos dois botões ---
+
+            // Botão Desktop (DK)
+            if (btnDeleteSelected) {
+                btnDeleteSelected.addEventListener('click', executarExclusaoEmMassa);
+            }
+
+            // Botão Mobile FAB (MB)
+            if (btnFabDelete) {
+                btnFabDelete.addEventListener('click', executarExclusaoEmMassa);
+            }
+
+            
+            // Chamada inicial para garantir consistência ao carregar a página
+            updateUI();
         });
-      });
-
-      // --- 4. NOVOS EVENTOS DE SELEÇÃO ---
-      if (selectAll) {
-          selectAll.addEventListener('change', function() {
-              checkboxes.forEach(cb => cb.checked = selectAll.checked);
-              updateUI();
-          });
-      }
-
-      checkboxes.forEach(cb => {
-          cb.addEventListener('change', updateUI);
-      });
-
-      if (btnDeleteSelected) {
-          btnDeleteSelected.addEventListener('click', function() {
-              const selectedIds = Array.from(document.querySelectorAll('.disciplina-checkbox:checked'))
-                                       .map(cb => cb.value);
-              
-              if (confirm(`Tem certeza que deseja excluir a(s) ${selectedIds.length} disciplina(s) selecionada(s)?`)) {
-                  bulkInput.value = selectedIds.join(',');
-                  bulkForm.submit();
-              }
-          });
-      }
-    });
-</script>
+    </script>
 {% endblock %}

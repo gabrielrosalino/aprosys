@@ -3,69 +3,77 @@
 
 {% block title %}Aprova System | Cadastrar Disciplina {% endblock %}
 
-
 {% block content %}
-<div class="report-header">
-    <h3 class="report-subtitle">Cadastrar</h3>
-    <h1 class="report-title">Disciplina</h1>
+
+  <!-- --------- TÍTULO DA PÁGINA --------- -->
+  <div class="report-header">
+      <h3 class="report-subtitle">Cadastrar</h3>
+      <h1 class="report-title">Disciplina</h1>
   </div>
 
+  <!-- --------- POSSÍVEIS ERROS NO FORMULÁRIO --------- -->
   {% if form.errors %}
-    <div class="alert alert-danger">
+  <div class="alert alert-danger">
       <ul>
-        {% for field in form %}
-          {% for err in field.errors %}
-            <li><strong>{{ field.label }}:</strong> {{ err }}</li>
+          {% for field in form %}
+              {% for err in field.errors %}
+                  <li><strong>{{ field.label }}:</strong> {{ err }}</li>
+              {% endfor %}
           {% endfor %}
-        {% endfor %}
-        {% for err in form.non_field_errors %}
-          <li>{{ err }}</li>
-        {% endfor %}
+          {% for err in form.non_field_errors %}
+              <li>{{ err }}</li>
+          {% endfor %}
       </ul>
-    </div>
+  </div>
   {% endif %}
 
+  <!-- --------- FORMULÁRIO DE CADASTRO/EDIÇÃO DE DISCIPLINA --------- -->
   <form method="post" action="{% if disciplina %}{% url 'editar_disciplina' disciplina.pk %}{% else %}{% url 'cadastrar_disciplina' %}{% endif %}" id="disciplina-form">
-    {% csrf_token %}
+      {% csrf_token %}
 
-    <fieldset class="chart-container">
-      <div class="form-fields-wrapper">
+      <fieldset class="chart-container">
+          <h3 class="form__fieldset-heading">Dados da Disciplina</h3>
+          
+          <div class="form-fields-wrapper">
+              <div class="form-group field-full">
+                  {{ form.nome.label_tag }}
+                  {{ form.nome }}
+              </div>
 
-        <!-- Campo nome oculto -->
-        <div class="form-group field-half" >
-          {{ form.nome.label_tag }}
-          {{ form.nome }}
-        </div>
+              <div class="form-group field-half">
+                  {{ form.area_conhecimento.label_tag }}
+                  {{ form.area_conhecimento }}
+              </div>
 
-        <div class="form-group field-half">
-          {{ form.area_conhecimento.label_tag }}
-          {{ form.area_conhecimento }}
-        </div>
+              <div class="form-group field-half">
+                  {{ form.status.label_tag }}
+                  {{ form.status }}
+              </div>
 
-        <div class="form-group field-half">
-          {{ form.status.label_tag }}
-          {{ form.status }}
-        </div>
+              <div class="form-group field-full">
+                  {{ form.curriculo.label_tag }}
+                  {{ form.curriculo }}
+              </div>
+          </div>
+      </fieldset>
 
-        <div class="form-group field-full">
-          {{ form.curriculo.label_tag }}
-          {{ form.curriculo }}
-        </div>
-
+      <!-- BOTÕES DE AÇÃO DO FORMULÁRIO -->
+      <div class="btn_wrapper">
+        {% if not visualizar %}
+          <button type="submit" class="btn btn-save">
+            {% if disciplina %}Salvar Alterações{% else %}Cadastrar{% endif %}
+          </button>
+        {% endif %}
+        
+        {% if disciplina %}
+          <button type="button" class="btn btn-cancel" onclick="window.history.back();">
+            {% if visualizar %}Voltar{% else %}Cancelar{% endif %}
+          </button>
+        {% else %}
+          <button type="button" class="btn btn-cancel" onclick="window.location.href='{% url 'home' %}';">
+            Cancelar
+          </button>
+        {% endif %}
       </div>
-    </fieldset>
- 
-    <div class="btn_wrapper">
-      {% if not visualizar %}
-        <button type="submit" class="btn btn-save">
-          {% if disciplina %}Salvar Alterações{% else %}Cadastrar{% endif %}
-        </button>
-      {% endif %}
-      
-      <button type="button" class="btn btn-cancel"
-        onclick="{% if disciplina %}window.history.back(){% else %}window.location.href='{% url 'home' %}'{% endif %};">
-        {% if visualizar %}Voltar{% else %}Cancelar{% endif %}
-      </button>
-    </div>
   </form>
-{% endblock %}
+{% endblock content %}

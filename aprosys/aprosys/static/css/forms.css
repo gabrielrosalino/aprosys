@@ -1,4 +1,5 @@
 /* forms.css */
+/* Formulários de cadastro e exibição */
 
 fieldset {
     display: flex;
@@ -14,12 +15,17 @@ fieldset {
     display: flex;
     flex-wrap: wrap;
     gap: 15px;
+    width: 100%; /* Adicione isso */
+    box-sizing: border-box;
 }
 
+/* Garante que cada grupo de input+label seja um bloco sólido */
 .form-group {
     display: flex;
     flex-direction: column;
-    margin-bottom: 0;
+    margin-bottom: 15px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .form-group label {
@@ -51,9 +57,16 @@ fieldset {
     flex-basis: 100%;
 }
 
+/* Mantém a integridade dos campos de metade da tela */
 .field-half {
     flex-basis: calc(50% - 8px);
     flex-grow: 0;
+}
+
+/* Garante que o formulário em si não ultrapasse o container pai */
+form {
+    max-width: 100%;
+    overflow-x: hidden; /* Evita scroll lateral acidental */
 }
 
 .form-group-title {
@@ -111,11 +124,37 @@ fieldset {
    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Correção para containers de dashboard usados em formulários */
+.chart-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important; /* Faz o padding ser calculado POR DENTRO dos 100% */
+}
+
+
 /* Responsividade */
 @media screen and (max-width: 768px) {
   .field-half {
     flex-basis: 100%;
   }
+
+  /* Força o respiro interno no mobile para evitar que os campos encostem na borda */
+    .flex-middle {
+        padding: 15px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .chart-container {
+        padding: 15px !important; /* Reduz o espaço interno para ganhar área de digitação */
+        margin: 10px 0 !important;
+        border-radius: 20px !important;
+    }
+
+    .form-fields-wrapper {
+        gap: 10px !important; /* Diminui o buraco entre os campos no celular */
+    }
+
 }
 
 

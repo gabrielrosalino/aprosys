@@ -4,11 +4,14 @@
 {% block title %}Aprova System | Pesquisar Aluno{% endblock %}
 
 {% block content %}
+
+  <!-- --------- TÍTULO DA PÁGINA (DK + MB) --------- -->
   <div class="report-header">
     <h3 class="report-subtitle">Pesquisar</h3>
     <h1 class="report-title">Aluno</h1>
   </div>
 
+  <!-- CAMPO DE PESQUISA (DK + MB) -->
   <form
     id="search-form"
     action="{% url 'pesquisar_aluno' %}"
@@ -31,6 +34,7 @@
     >&times;</button>
   </form>
 
+  <!-- --------- TABELA DE ALUNOS (DK + MB) --------- -->
   <table>
     <thead>
       <tr>
@@ -120,4 +124,5 @@
       });
     });
   </script>
+  
 {% endblock %}
