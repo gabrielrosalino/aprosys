@@ -3,6 +3,25 @@
 @import url('style.css');
 
 /* --------------------------------------------------
+                      SUMÁRIO
+--------------------------------------------------
+1. BARRA DE PESQUISA
+   - Estilos do container e do input de pesquisa localizado acima da tabela.
+
+2. TABELA DE DADOS (DK)
+   - Estrutura e estilização da tabela HTML padrão para visualização em Desktop.
+
+3. AÇÕES E INTERATIVIDADE
+   - Botões de ação (editar, excluir), ícones SVG, checkboxes e efeitos de hover/seleção.
+
+4. CONTROLE DE VISIBILIDADE
+   - Classes utilitárias para gerenciar o que aparece em Desktop vs Mobile.
+
+5. INTERFACE MOBILE
+   - Regras @media para transformar a tabela em lista de cards em telas pequenas (< 768px).
+-------------------------------------------------- */
+
+/* --------------------------------------------------
                     BARRA DE PESQUISA
 -------------------------------------------------- */
 .search-container-table {
