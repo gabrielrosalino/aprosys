@@ -80,14 +80,16 @@ tbody tr:last-child td {
     cursor: pointer;
 }
 
-.edit-button:hover {
-    color: #00c0ca !important; 
-    transform: scale(1.1);
-}
+@media (hover: hover) {
+    .edit-button:hover {
+        color: #00c0ca !important; 
+        transform: scale(1.1);
+    }
 
-.delete-button:hover {
-    color: #ff0000 !important; 
-    transform: scale(1.1);
+    .delete-button:hover {
+        color: #ff0000 !important; 
+        transform: scale(1.1);
+    }
 }
 
 .table-action-cell a svg,
