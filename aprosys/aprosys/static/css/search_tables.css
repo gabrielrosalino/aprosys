@@ -161,10 +161,18 @@ tr.row-selected td {
 -------------------------------------------------- */
 @media screen and (max-width: 768px) {
     
-    /* 1. FORÇAR O SUMIÇO DA TABELA DESKTOP NO MOBILE */
     .d-none.d-md-block,
     .search-container-table table { 
         display: none !important; 
+    }
+
+    #bulk-actions-container {
+        display: none !important;
+    }
+
+    .search-container-table {
+        max-width: 100% !important;
+        width: 100% !important;
     }
 
     /* 2. REATIVAR A INTERFACE MOBILE (FORÇANDO VISIBILIDADE) */
