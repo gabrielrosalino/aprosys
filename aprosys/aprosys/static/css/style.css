@@ -94,14 +94,6 @@ body {
     color: var(--grey-dark);
 }
 
-/* Desktop + Mobile */
-.edit-button {
-    width: 2rem;
-    color: #999;
-}
-.edit-button:hover {
-    color: #555555;
-}
 
 
 
@@ -627,39 +619,4 @@ iframe {
         gap: 12px 16px !important;
         /* opcional: ajustar espaçamento */
     }
-    
-}
-
-/* Centraliza os ícones de ação na tabela */
-.table-action-cell {
-    text-align: center !important;
-    width: 80px !important;
-    vertical-align: middle !important;
-}
-
-/* Força o tamanho dos SVGs para ficarem iguais */
-.edit-button, 
-.delete-button {
-    display: inline-block !important;
-    width: 20px !important;  /* Tamanho fixo em pixels para evitar erro de escala */
-    height: 20px !important; /* Tamanho fixo em pixels */
-    color: #999;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-}
-
-.delete-button:hover {
-    color: #ff0000 !important;
-    transform: scale(1.1);
-}
-
-.edit-button:hover {
-    color: #00c0ca !important;
-    transform: scale(1.1);
-}
-
-/* Garante que o conteúdo interno do SVG não escape */
-.table-action-cell svg {
-    max-width: 100% !important;
-    max-height: 100% !important;
 }
