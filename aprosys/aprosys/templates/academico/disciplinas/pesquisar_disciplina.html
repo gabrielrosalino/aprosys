@@ -104,7 +104,15 @@
     <div class="d-md-none mobile-list-interface">
         <div id="mobile-list-content">
             <div class="mobile-group">
-                <h4 class="group-header">Ativo <span class="sort-icon">▼</span></h4>
+                
+                <div class="group-header">
+                    <div class="group-header-content">
+                        <input type="checkbox" class="select-group-checkbox">
+                        <span class="group-title">Ativo</span>
+                    </div>
+                    <span class="sort-icon">▼</span>
+                </div>
+
                 {% for disciplina in disciplinas %}
                     {% if disciplina.status == 1 or disciplina.status == '1' or disciplina.status == True %}
                     <div class="mobile-item-row">
@@ -128,7 +136,15 @@
             </div>
 
             <div class="mobile-group">
-                <h4 class="group-header">Inativo <span class="sort-icon">▼</span></h4>
+                
+                <div class="group-header">
+                    <div class="group-header-content">
+                        <input type="checkbox" class="select-group-checkbox">
+                        <span class="group-title">Inativo</span>
+                    </div>
+                    <span class="sort-icon">▼</span>
+                </div>
+
                 {% for disciplina in disciplinas %}
                     {% if disciplina.status == 0 or disciplina.status == '0' or disciplina.status == False %}
                     <div class="mobile-item-row">
@@ -174,6 +190,7 @@
             const clearBtn = document.getElementById('clear-btn');
             
             const selectAll = document.getElementById('select-all-disciplinas');
+            const groupSelects = document.querySelectorAll('.select-group-checkbox');
             const checkboxes = document.querySelectorAll('.disciplina-checkbox');
             const bulkContainer = document.getElementById('bulk-actions-container');
             const btnDeleteSelected = document.getElementById('btn-delete-selected');
@@ -261,29 +278,70 @@
             });
 
             // --- 4. Eventos de Seleção ---
-            // 4.1 Evento de igualar as caixinhas filhas à caixa "selecionar todos"
+                        // 4.1 Evento de igualar as caixinhas filhas à caixa "selecionar todos"
             if (selectAll) {
                 selectAll.addEventListener('change', function() {
-                    checkboxes.forEach(cb => {
-                        cb.checked = selectAll.checked;
-                    });
+                    const isChecked = this.checked;
+                    checkboxes.forEach(cb => cb.checked = isChecked);
+                    // Atualiza também todos os headers de grupo mobile
+                    groupSelects.forEach(gs => gs.checked = isChecked);
                     updateUI();
                 });
             }
 
-            // 4.2 Evento para cada caixinha individual
+            // 4.2 Lógica para os headers de grupo (Mobile - Genérico)
+            groupSelects.forEach(gs => {
+                gs.addEventListener('change', function() {
+                    const isChecked = this.checked;
+                    // Encontra o grupo pai deste checkbox (Ativo, Inativo, etc.)
+                    const group = this.closest('.mobile-group');
+                    if (group) {
+                        // Seleciona apenas os checkboxes DENTRO deste grupo
+                        const groupCheckboxes = group.querySelectorAll('.disciplina-checkbox');
+                        groupCheckboxes.forEach(cb => {
+                            cb.checked = isChecked;
+                            // Sincroniza com os checkboxes do Desktop (mesmo ID/Value)
+                            const val = cb.value;
+                            checkboxes.forEach(other => { if (other.value === val) other.checked = isChecked; });
+                        });
+                    }
+                    
+                    // Verifica se TUDO na página foi selecionado para marcar o header Desktop
+                    const allChecked = document.querySelectorAll('.disciplina-checkbox:checked').length === checkboxes.length;
+                    if (selectAll) selectAll.checked = (checkboxes.length > 0 && allChecked);
+
+                    updateUI();
+                });
+            });
+
+            // 4.3 Evento para cada caixinha individual
             checkboxes.forEach(cb => {
                 cb.addEventListener('change', function() {
-                    // Desmarca o "selecionar todos" se um item for desmarcado
-                    if (!this.checked && selectAll) selectAll.checked = false;
-                    
-                    // Marca o "selecionar todos" se todos os itens forem marcados manualmente
+                    const isChecked = this.checked;
+                    const val = this.value;
+
+                    // Sincroniza checkboxes com o mesmo valor (Desktop <-> Mobile)
+                    checkboxes.forEach(other => {
+                        if (other.value === val) other.checked = isChecked;
+                    });
+
+                    // 1. Atualiza o Select All Geral (Desktop)
                     const allChecked = document.querySelectorAll('.disciplina-checkbox:checked').length === checkboxes.length;
-                    if (allChecked && selectAll) selectAll.checked = true;
+                    if (selectAll) selectAll.checked = (checkboxes.length > 0 && allChecked);
+                    
+                    // 2. Atualiza TODOS os Select All de Grupo (Mobile)
+                    document.querySelectorAll('.mobile-group').forEach(group => {
+                        const groupSelect = group.querySelector('.select-group-checkbox');
+                        const groupCheckboxes = group.querySelectorAll('.disciplina-checkbox');
+                        if (groupSelect && groupCheckboxes.length > 0) {
+                            groupSelect.checked = Array.from(groupCheckboxes).every(c => c.checked);
+                        }
+                    });
                     
                     updateUI();
                 });
             });
+
 
             // --- 5. Ação de Excluir Selecionados (Bulk Delete) ---
             // --- 51. Definimos a função de exclusão uma única vez (DK + MB) ---

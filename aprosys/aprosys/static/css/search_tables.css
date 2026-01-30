@@ -80,6 +80,13 @@ tbody tr:last-child td {
     border-bottom: none;
 }
 
+.table-empty-message {
+    text-align: center;
+    padding: 25px;
+    color: var(--text-color-medium);
+    font-style: italic;
+}
+
 /* --------------------------------------------------
                 AÇÕES E INTERATIVIDADE
 -------------------------------------------------- */
@@ -111,6 +118,18 @@ tbody tr:last-child td {
     }
 }
 
+.select-group-checkbox, .group-header input[type="checkbox"] {
+    accent-color: var(--secondary-color) !important;
+}
+
+.select-group-checkbox:not(:checked), .group-header input[type="checkbox"]:not(:checked) {
+    -webkit-appearance: none;
+    appearance: none;
+    border: 1px solid var(--secondary-color);
+    border-radius: 3px;
+    background-color: white;
+}
+
 .table-action-cell a svg,
 .table-action-cell svg {
     width: 100%;
@@ -125,14 +144,7 @@ tr.row-selected td {
     background-color: #f0f7f7 !important;
 }
 
-.table-empty-message {
-    text-align: center;
-    padding: 25px;
-    color: var(--text-color-medium);
-    font-style: italic;
-}
-
-.course-checkbox, .disciplina-checkbox, #select-all-courses, #select-all-disciplinas {
+.course-checkbox, .disciplina-checkbox, .select-group-checkbox, #select-all-courses, #select-all-disciplinas {
     cursor: pointer;
     width: 16px;
     height: 16px;
@@ -191,7 +203,7 @@ tr.row-selected td {
         gap: 12px !important;
     }
 
-    /* 3. ESTILO DAS PÍLULAS E GRUPOS */
+    /* 3. ESTILO DOS FILTROS E GRUPOS */
     .filter-btn {
         padding: 8px 20px !important;
         border-radius: 25px !important;
@@ -210,13 +222,20 @@ tr.row-selected td {
 
     .group-header {
         color: #00a896 !important;
-        font-weight: bold !important;
+        font-style: italic;
         border-bottom: 2px solid #00a896 !important;
         padding-bottom: 8px !important;
         margin-top: 25px !important;
         display: flex !important;
         justify-content: space-between !important;
+        padding: 5px;
     }
+
+    .group-header-content {
+        display: flex;
+        gap: 12px;
+    }
+
 
     /* 4. LINHAS E AÇÕES (GAP E SEM SUBRLINHADO) */
     .mobile-item-row {
