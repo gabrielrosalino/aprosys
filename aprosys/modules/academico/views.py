@@ -1,3 +1,5 @@
+import json
+
 from functools import wraps
 
 from django.contrib import messages
@@ -193,6 +195,7 @@ def cadastrar_disciplina(request, disciplina_id=None):
         },
     )
 
+
 @login_required
 def pesquisar_disciplina(request):
     q = request.GET.get('q', '').strip()
@@ -217,8 +220,7 @@ def pesquisar_disciplina(request):
             Q(nome__icontains=q) | Q(area_conhecimento__icontains=q)
         )
 
-    # --- NOVO: Contagens para a Interface Mobile (MB) ---
-    # Fazemos isso antes da ordenação final para otimizar
+    # Contagens para o cabeçalho
     total_ativos = disciplinas.filter(status=True).count()
     total_inativos = disciplinas.filter(status=False).count()
 
@@ -237,6 +239,20 @@ def pesquisar_disciplina(request):
     prefix = '' if direction == 'asc' else '-'
     disciplinas = disciplinas.order_by(f'{prefix}{allowed_fields[order]}')
 
+    # --- NOVO: Preparação dos dados para o JavaScript ---
+    disciplinas_data = []
+    for d in disciplinas:
+        disciplinas_data.append({
+            'id': d.pk,
+            'nome': d.nome,
+            'status_display': d.get_status_display(),
+            'area_display': d.get_area_conhecimento_display(),
+            'status_raw': d.status,
+        })
+    
+    # Geramos o texto JSON
+    disciplinas_json = json.dumps(disciplinas_data)
+
     return render(
         request,
         'academico/disciplinas/pesquisar_disciplina.html',
@@ -246,9 +262,9 @@ def pesquisar_disciplina(request):
             'order': order,
             'dir': direction,
             'active_menu': 'disciplinas',
-            # Passando os totais para o context
             'total_ativos': total_ativos,
             'total_inativos': total_inativos,
+            'disciplinas_json': disciplinas_json, # Passamos o JSON aqui
         },
     )
 
