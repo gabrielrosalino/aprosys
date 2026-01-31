@@ -236,8 +236,25 @@ tr.row-selected td {
         gap: 12px;
     }
 
+    /* 4. TOGGLE */
+    /* Estado Inicial (Aberto) */
+    .filter-toggle {
+        display: inline-block;
+        transition: transform 0.3s ease;
+        cursor: pointer;
+        padding: 5px;
+    }
 
-    /* 4. LINHAS E AÇÕES (GAP E SEM SUBRLINHADO) */
+    /* Quando o grupo estiver recolhido */
+    .mobile-group.collapsed .mobile-group-content {
+        display: none !important; /* Agora que o HTML está certo, isso vai funcionar */
+    }
+
+    .mobile-group.collapsed .filter-toggle {
+        transform: rotate(-180deg); /* Gira 180 graus para cima */
+    }
+
+    /* 5. LINHAS E AÇÕES (GAP E SEM SUBRLINHADO) */
     .mobile-item-row {
         display: flex !important;
         align-items: center !important;
@@ -264,7 +281,7 @@ tr.row-selected td {
         display: flex !important;
     }
 
-    /* 5. ESTADOS DE SELEÇÃO E FAB */
+    /* 6. ESTADOS DE SELEÇÃO E FAB */
     .mobile-item-row.item-selected .item-name {
         color: #004a7c !important; 
         font-weight: 700 !important;
