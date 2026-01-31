@@ -126,7 +126,8 @@
                                         <path fill="currentColor" d="M439.5 107.8C447.1 100.2 457.3 96 468 96C478.7 96 488.9 100.2 496.5 107.8L532.2 143.5C539.8 151.1 544 161.3 544 172C544 182.7 539.8 192.9 532.2 200.5L473.7 259L381 166.3L439.5 107.8zM358.3 189L451 281.7L238.2 494.4C231.4 501.2 222.9 506.2 213.6 508.8L99.5 540.5L131.2 426.4C133.8 417.1 138.7 408.6 145.6 401.8L358.3 189zM468 64C448.8 64 430.4 71.6 416.9 85.2L122.9 379.2C112.2 389.9 104.4 403.3 100.3 417.9L64.9 545.6C62.6 553.9 64.9 562.9 71.1 569C77.3 575.1 86.2 577.5 94.5 575.2L222.3 539.7C236.9 535.6 250.2 527.9 261 517.1L555 223.1C568.4 209.6 576 191.2 576 172C576 152.8 568.4 134.4 554.8 120.9L519.1 85.2C505.6 71.6 487.2 64 468 64z"></path>
                                     </svg>
                                 </a>
-                                <a href="{% url 'excluir_disciplina' disciplina.pk %}" onclick="return confirm('Excluir?');">
+                                <a href="{% url 'excluir_disciplina' disciplina.pk %}" 
+                                onclick="return confirm('Excluir {{ disciplina.nome|escapejs }}?');">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="delete-button">
                                         <path fill="currentColor" d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"></path>
                                     </svg>
@@ -162,7 +163,8 @@
                                         <path fill="currentColor" d="M439.5 107.8C447.1 100.2 457.3 96 468 96C478.7 96 488.9 100.2 496.5 107.8L532.2 143.5C539.8 151.1 544 161.3 544 172C544 182.7 539.8 192.9 532.2 200.5L473.7 259L381 166.3L439.5 107.8zM358.3 189L451 281.7L238.2 494.4C231.4 501.2 222.9 506.2 213.6 508.8L99.5 540.5L131.2 426.4C133.8 417.1 138.7 408.6 145.6 401.8L358.3 189zM468 64C448.8 64 430.4 71.6 416.9 85.2L122.9 379.2C112.2 389.9 104.4 403.3 100.3 417.9L64.9 545.6C62.6 553.9 64.9 562.9 71.1 569C77.3 575.1 86.2 577.5 94.5 575.2L222.3 539.7C236.9 535.6 250.2 527.9 261 517.1L555 223.1C568.4 209.6 576 191.2 576 172C576 152.8 568.4 134.4 554.8 120.9L519.1 85.2C505.6 71.6 487.2 64 468 64z"></path>
                                     </svg>
                                 </a>
-                                <a href="{% url 'excluir_disciplina' disciplina.pk %}" onclick="return confirm('Excluir?');">
+                                <a href="{% url 'excluir_disciplina' disciplina.pk %}" 
+                                onclick="return confirm('Excluir {{ disciplina.nome|escapejs }}?');">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="delete-button">
                                         <path fill="currentColor" d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"></path>
                                     </svg>
@@ -193,206 +195,177 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // --- 1. Seleção de Elementos ---
-            const searchForm = document.getElementById('search-form');
-            const searchInput = document.getElementById('search-input');
-            const clearBtn = document.getElementById('clear-btn');
-            
-            const selectAll = document.getElementById('select-all-disciplinas');
-            const groupSelects = document.querySelectorAll('.select-group-checkbox');
-            const checkboxes = document.querySelectorAll('.disciplina-checkbox');
-            const bulkContainer = document.getElementById('bulk-actions-container');
-            const btnDeleteSelected = document.getElementById('btn-delete-selected');
-            const bulkForm = document.getElementById('bulk-delete-form');
-            const bulkInput = document.getElementById('disciplina-ids-input');
+        // --- 1. Seleção de Elementos ---
+        const searchForm = document.getElementById('search-form');
+        const searchInput = document.getElementById('search-input');
+        const clearBtn = document.getElementById('clear-btn');
+        
+        const selectAll = document.getElementById('select-all-disciplinas');
+        const groupSelects = document.querySelectorAll('.select-group-checkbox');
+        const checkboxes = document.querySelectorAll('.disciplina-checkbox');
+        const bulkContainer = document.getElementById('bulk-actions-container');
+        const btnDeleteSelected = document.getElementById('btn-delete-selected');
+        const bulkForm = document.getElementById('bulk-delete-form');
+        const bulkInput = document.getElementById('disciplina-ids-input');
+        const btnFabDelete = document.getElementById('mobile-fab-delete');
 
-            const btnFabDelete = document.getElementById('mobile-fab-delete');
+        // --- 2. Função Auxiliar para Contagem Real (Itens Únicos) ---
+        // Essencial para evitar a contagem duplicada (DK + MB)
+        function getCheckedCount() {
+            const selectedCheckboxes = document.querySelectorAll('.disciplina-checkbox:checked');
+            const uniqueIds = new Set(Array.from(selectedCheckboxes).map(cb => cb.value));
+            return uniqueIds.size;
+        }
 
-            // --- 2. Função de Atualização da Interface (Destaque Visual) ---
-            function updateUI() {
-                const checkedCount = document.querySelectorAll('.disciplina-checkbox:checked').length;
-                const isMobile = window.innerWidth <= 768; // Define o limite do mobile
+        // --- 3. Função de Atualização da Interface (Destaque Visual) ---
+        function updateUI() {
+            const checkedCount = getCheckedCount();
+            const isMobile = window.innerWidth <= 768;
 
-                // 2.1 Controle do Botão de Exclusão Desktop (DK)
-                if (bulkContainer) {
-                    // Só exibe se houver seleção E NÃO for mobile
-                    if (checkedCount > 0 && !isMobile) {
-                        bulkContainer.style.visibility = 'visible';
-                        bulkContainer.style.display = 'block';
-                    } else {
-                        bulkContainer.style.visibility = 'hidden';
-                    }
-                }
-
-                // 2.2 Controle do Botão Flutuante Mobile (MB)
-                if (btnFabDelete) {
-                    // Só exibe se houver seleção E FOR mobile
-                    if (checkedCount > 0 && isMobile) {
-                        btnFabDelete.style.display = 'flex';
-                    } else {
-                        btnFabDelete.style.display = 'none';
-                    }
-                }
-
-                // 2.3 Lógica de Destaque Visual (DK + MB)
-                document.querySelectorAll('.disciplina-checkbox').forEach(cb => {
-                    // Tabela Desktop
-                    const row = cb.closest('tr');
-                    if (row) {
-                        if (cb.checked) row.classList.add('row-selected');
-                        else row.classList.remove('row-selected');
-                    }
-
-                    // Lista Mobile
-                    const mobileRow = cb.closest('.mobile-item-row');
-                    if (mobileRow) {
-                        if (cb.checked) mobileRow.classList.add('item-selected');
-                        else mobileRow.classList.remove('item-selected');
-                    }
-                });
-            }
-
-            // --- 3. Eventos de Pesquisa ---
-            if (searchInput && searchForm) {
-                searchInput.addEventListener('keydown', e => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        searchForm.submit();
-                    }
-                });
-            }
-
-            if (clearBtn && searchInput && searchForm) {
-                clearBtn.addEventListener('click', () => {
-                    searchInput.value = '';
-                    searchForm.submit();
-                });
-            }
-
-            // Ordenação das Colunas
-            document.querySelectorAll('th.sortable').forEach(th => {
-                th.addEventListener('click', () => {
-                    const field = th.dataset.field;
-                    const qParam = "{{ q|escapejs }}";
-                    let orderParam = "{{ order }}";
-                    let dirParam = "{{ dir }}";
-                    let newDir = (field === orderParam && dirParam === 'asc') ? 'desc' : 'asc';
-                    
-                    const params = new URLSearchParams();
-                    if (qParam) params.set('q', qParam);
-                    params.set('order', field);
-                    params.set('dir', newDir);
-                    window.location.search = params.toString();
-                });
-            });
-
-            // --- 4. Eventos de Seleção ---
-                        // 4.1 Evento de igualar as caixinhas filhas à caixa "selecionar todos"
-            if (selectAll) {
-                selectAll.addEventListener('change', function() {
-                    const isChecked = this.checked;
-                    checkboxes.forEach(cb => cb.checked = isChecked);
-                    // Atualiza também todos os headers de grupo mobile
-                    groupSelects.forEach(gs => gs.checked = isChecked);
-                    updateUI();
-                });
-            }
-
-            // 4.2 Lógica para os headers de grupo (Mobile - Genérico)
-            groupSelects.forEach(gs => {
-                gs.addEventListener('change', function() {
-                    const isChecked = this.checked;
-                    // Encontra o grupo pai deste checkbox (Ativo, Inativo, etc.)
-                    const group = this.closest('.mobile-group');
-                    if (group) {
-                        // Seleciona apenas os checkboxes DENTRO deste grupo
-                        const groupCheckboxes = group.querySelectorAll('.disciplina-checkbox');
-                        groupCheckboxes.forEach(cb => {
-                            cb.checked = isChecked;
-                            // Sincroniza com os checkboxes do Desktop (mesmo ID/Value)
-                            const val = cb.value;
-                            checkboxes.forEach(other => { if (other.value === val) other.checked = isChecked; });
-                        });
-                    }
-                    
-                    // Verifica se TUDO na página foi selecionado para marcar o header Desktop
-                    const allChecked = document.querySelectorAll('.disciplina-checkbox:checked').length === checkboxes.length;
-                    if (selectAll) selectAll.checked = (checkboxes.length > 0 && allChecked);
-
-                    updateUI();
-                });
-            });
-
-            // 4.3 Evento para cada caixinha individual
-            checkboxes.forEach(cb => {
-                cb.addEventListener('change', function() {
-                    const isChecked = this.checked;
-                    const val = this.value;
-
-                    // Sincroniza checkboxes com o mesmo valor (Desktop <-> Mobile)
-                    checkboxes.forEach(other => {
-                        if (other.value === val) other.checked = isChecked;
-                    });
-
-                    // 1. Atualiza o Select All Geral (Desktop)
-                    const allChecked = document.querySelectorAll('.disciplina-checkbox:checked').length === checkboxes.length;
-                    if (selectAll) selectAll.checked = (checkboxes.length > 0 && allChecked);
-                    
-                    // 2. Atualiza TODOS os Select All de Grupo (Mobile)
-                    document.querySelectorAll('.mobile-group').forEach(group => {
-                        const groupSelect = group.querySelector('.select-group-checkbox');
-                        const groupCheckboxes = group.querySelectorAll('.disciplina-checkbox');
-                        if (groupSelect && groupCheckboxes.length > 0) {
-                            groupSelect.checked = Array.from(groupCheckboxes).every(c => c.checked);
-                        }
-                    });
-                    
-                    updateUI();
-                });
-            });
-
-
-            // --- 5. Ação de Excluir Selecionados (Bulk Delete) ---
-            // --- 51. Definimos a função de exclusão uma única vez (DK + MB) ---
-            function executarExclusaoEmMassa() {
-                const selectedIds = Array.from(document.querySelectorAll('.disciplina-checkbox:checked'))
-                                        .map(cb => cb.value);
-                
-                if (selectedIds.length === 0) return;
-
-                if (confirm(`Tem certeza que deseja excluir a(s) ${selectedIds.length} disciplina(s) selecionada(s)?`)) {
-                    bulkInput.value = selectedIds.join(',');
-                    bulkForm.submit();
+            // 3.1 Controle do Botão de Exclusão Desktop (DK)
+            if (bulkContainer) {
+                if (checkedCount > 0 && !isMobile) {
+                    bulkContainer.style.visibility = 'visible';
+                    bulkContainer.style.display = 'block';
+                } else {
+                    bulkContainer.style.visibility = 'hidden';
+                    bulkContainer.style.display = 'none';
                 }
             }
 
-            // --- 52. Atribuímos a função aos dois botões ---
-
-            // Botão Desktop (DK)
-            if (btnDeleteSelected) {
-                btnDeleteSelected.addEventListener('click', executarExclusaoEmMassa);
-            }
-
-            // Botão Mobile FAB (MB)
+            // 3.2 Controle do Botão Flutuante Mobile (MB)
             if (btnFabDelete) {
-                btnFabDelete.addEventListener('click', executarExclusaoEmMassa);
+                if (checkedCount > 0 && isMobile) {
+                    btnFabDelete.style.display = 'flex';
+                } else {
+                    btnFabDelete.style.display = 'none';
+                }
             }
 
-            // --- 6. Funcionalidade de Toggle nos Grupos Mobile (Apenas na Seta) ---
-            document.querySelectorAll('.filter-toggle').forEach(arrow => {
-                arrow.addEventListener('click', function(e) {
-                    e.stopPropagation(); // Impede fechar ao clicar no checkbox
-                    
-                    // Sobe até encontrar o container principal do grupo
-                    const group = this.closest('.mobile-group');
-                    if (group) {
-                        group.classList.toggle('collapsed');
-                    }
-                });
+            // 3.3 Lógica de Destaque Visual (Linhas coloridas)
+            document.querySelectorAll('.disciplina-checkbox').forEach(cb => {
+                // Tabela Desktop
+                const row = cb.closest('tr');
+                if (row) {
+                    cb.checked ? row.classList.add('row-selected') : row.classList.remove('row-selected');
+                }
+
+                // Lista Mobile
+                const mobileRow = cb.closest('.mobile-item-row');
+                if (mobileRow) {
+                    cb.checked ? mobileRow.classList.add('item-selected') : mobileRow.classList.remove('item-selected');
+                }
             });
-            
-            // Chamada inicial para garantir consistência ao carregar a página
-            updateUI();
+        }
+
+        // --- 4. Eventos de Pesquisa e Ordenação ---
+        if (searchInput && searchForm) {
+            searchInput.addEventListener('keydown', e => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    searchForm.submit();
+                }
+            });
+        }
+
+        if (clearBtn && searchInput && searchForm) {
+            clearBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                searchForm.submit();
+            });
+        }
+
+        document.querySelectorAll('th.sortable').forEach(th => {
+            th.addEventListener('click', () => {
+                const field = th.dataset.field;
+                const params = new URLSearchParams(window.location.search);
+                const currentOrder = params.get('order');
+                const currentDir = params.get('dir');
+                
+                let newDir = (field === currentOrder && currentDir === 'asc') ? 'desc' : 'asc';
+                
+                params.set('order', field);
+                params.set('dir', newDir);
+                window.location.search = params.toString();
+            });
         });
+
+        // --- 5. Eventos de Seleção (Checkboxes) ---
+        // 5.1 Selecionar Tudo (Geral)
+        if (selectAll) {
+            selectAll.addEventListener('change', function() {
+                const isChecked = this.checked;
+                checkboxes.forEach(cb => cb.checked = isChecked);
+                groupSelects.forEach(gs => gs.checked = isChecked);
+                updateUI();
+            });
+        }
+
+        // 5.2 Seleção por Grupo (Mobile)
+        groupSelects.forEach(gs => {
+            gs.addEventListener('change', function() {
+                const isChecked = this.checked;
+                const group = this.closest('.mobile-group');
+                if (group) {
+                    const groupCheckboxes = group.querySelectorAll('.disciplina-checkbox');
+                    groupCheckboxes.forEach(cb => {
+                        cb.checked = isChecked;
+                        // Sincroniza com o Desktop
+                        document.querySelectorAll(`.disciplina-checkbox[value="${cb.value}"]`).forEach(other => {
+                            other.checked = isChecked;
+                        });
+                    });
+                }
+                updateUI();
+            });
+        });
+
+        // 5.3 Seleção Individual
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', function() {
+                const isChecked = this.checked;
+                const val = this.value;
+
+                // Sincroniza instâncias do mesmo item (DK <-> MB)
+                document.querySelectorAll(`.disciplina-checkbox[value="${val}"]`).forEach(other => {
+                    other.checked = isChecked;
+                });
+
+                updateUI();
+            });
+        });
+
+        // --- 6. Ação de Excluir Selecionados (Bulk Delete) ---
+        function executarExclusaoEmMassa() {
+            const selectedCheckboxes = document.querySelectorAll('.disciplina-checkbox:checked');
+            const selectedIds = Array.from(new Set(Array.from(selectedCheckboxes).map(cb => cb.value)));
+            const checkedCount = selectedIds.length; // Contagem única para o alerta
+            
+            if (checkedCount === 0) return;
+
+            if (confirm(`Tem certeza que deseja excluir a(s) ${checkedCount} disciplina(s) selecionada(s)?`)) {
+                bulkInput.value = selectedIds.join(',');
+                bulkForm.submit();
+            }
+        }
+
+        if (btnDeleteSelected) btnDeleteSelected.addEventListener('click', executarExclusaoEmMassa);
+        if (btnFabDelete) btnFabDelete.addEventListener('click', executarExclusaoEmMassa);
+
+        // --- 7. Funcionalidade de Toggle nos Grupos Mobile (Apenas na Seta) ---
+        document.querySelectorAll('.filter-toggle').forEach(arrow => {
+            arrow.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const group = this.closest('.mobile-group');
+                if (group) {
+                    group.classList.toggle('collapsed');
+                }
+            });
+        });
+
+        // Chamada inicial
+        updateUI();
+    });
+
     </script>
 {% endblock %}
