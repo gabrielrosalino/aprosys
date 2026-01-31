@@ -291,7 +291,7 @@
                 renderMobileUI('area');
             };
 
-            // --- 5. Eventos de Pesquisa e Limpeza (AQUI ESTAVA O ERRO!) ---
+            // --- 5. Eventos de Pesquisa e Limpeza (Garante recarregamento total) ---
 
             if (searchInput && searchForm) {
                 searchInput.addEventListener('keydown', e => {
@@ -304,8 +304,12 @@
 
             if (clearBtn && searchInput && searchForm) {
                 clearBtn.addEventListener('click', () => {
-                    searchInput.value = ''; // Limpa o texto
-                    searchForm.submit();    // Envia o formulário vazio para resetar a busca
+                    // 1. Limpa o texto do campo
+                    searchInput.value = ''; 
+
+                    // 2. Envia o formulário vazio para o servidor
+                    // Isso faz a página recarregar e trazer TODAS as disciplinas de volta
+                    searchForm.submit(); 
                 });
             }
 
