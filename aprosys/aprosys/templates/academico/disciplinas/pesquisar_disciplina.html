@@ -277,19 +277,30 @@
                 });
             }
 
-            // --- 4. Eventos de Filtro (Pílulas Status/Área) ---
+            // --- 4. Eventos de Filtro (Pílulas Status/Área) com Memória ---
 
-            btnStatus.onclick = () => {
-                btnStatus.classList.add('active');
-                btnArea.classList.remove('active');
-                renderMobileUI('status');
-            };
+            // Função para trocar a pílula ativa e salvar a escolha
+            function setFiltroAtivo(criterio) {
+                if (criterio === 'area') {
+                    btnArea.classList.add('active');
+                    btnStatus.classList.remove('active');
+                } else {
+                    btnStatus.classList.add('active');
+                    btnArea.classList.remove('active');
+                }
+                // Salva no navegador qual foi o último filtro usado
+                localStorage.setItem('filtro_disciplina_preferido', criterio);
+                renderMobileUI(criterio);
+            }
 
-            btnArea.onclick = () => {
-                btnArea.classList.add('active');
-                btnStatus.classList.remove('active');
-                renderMobileUI('area');
-            };
+            btnStatus.onclick = () => setFiltroAtivo('status');
+            btnArea.onclick = () => setFiltroAtivo('area');
+
+            // --- INICIALIZAÇÃO INTELIGENTE ---
+            // Quando a página carrega (inclusive após uma pesquisa), 
+            // ele olha se tem algo salvo. Se não tiver, usa 'status'.
+            const ultimoFiltro = localStorage.getItem('filtro_disciplina_preferido') || 'status';
+            setFiltroAtivo(ultimoFiltro);
 
             // --- 5. Eventos de Pesquisa e Limpeza (Garante recarregamento total) ---
 
