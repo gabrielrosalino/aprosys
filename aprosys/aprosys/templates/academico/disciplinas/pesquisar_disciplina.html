@@ -239,21 +239,39 @@
             function updateUI() {
                 const selected = document.querySelectorAll('.disciplina-checkbox:checked');
                 const checkedCount = new Set(Array.from(selected).map(cb => cb.value)).size;
+                
                 const allCbs = document.querySelectorAll('.disciplina-checkbox');
                 const totalUnique = new Set(Array.from(allCbs).map(cb => cb.value)).size;
+                
                 const isMobile = window.innerWidth <= 768;
 
+                // 1. Checkbox Mestre Geral (Desktop)
                 if (selectAll) selectAll.checked = (totalUnique > 0 && checkedCount === totalUnique);
 
+                // 2. NOVA LÓGICA: Checkbox de Cabeçalho de cada Grupo (Mobile)
+                document.querySelectorAll('.mobile-group').forEach(group => {
+                    const groupSelect = group.querySelector('.select-group-checkbox');
+                    const groupCheckboxes = group.querySelectorAll('.disciplina-checkbox');
+                    
+                    if (groupSelect && groupCheckboxes.length > 0) {
+                        // O cabeçalho só fica checked se TODOS os itens deste grupo específico estiverem checked
+                        const allInGroupChecked = Array.from(groupCheckboxes).every(cb => cb.checked);
+                        groupSelect.checked = allInGroupChecked;
+                    }
+                });
+
+                // 3. Atualiza visibilidade dos botões de exclusão
                 if (bulkContainer) {
                     bulkContainer.style.display = (checkedCount > 0 && !isMobile) ? 'block' : 'none';
                     bulkContainer.style.visibility = (checkedCount > 0 && !isMobile) ? 'visible' : 'hidden';
                 }
                 if (btnFabDelete) btnFabDelete.style.display = (checkedCount > 0 && isMobile) ? 'flex' : 'none';
 
+                // 4. Destaque visual (cores nas linhas)
                 document.querySelectorAll('.disciplina-checkbox').forEach(cb => {
                     const row = cb.closest('tr');
                     if (row) cb.checked ? row.classList.add('row-selected') : row.classList.remove('row-selected');
+                    
                     const mRow = cb.closest('.mobile-item-row');
                     if (mRow) cb.checked ? mRow.classList.add('item-selected') : mRow.classList.remove('item-selected');
                 });
