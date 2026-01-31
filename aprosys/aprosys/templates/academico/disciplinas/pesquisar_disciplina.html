@@ -219,10 +219,31 @@
 
         // --- 3. Função de Atualização da Interface (Destaque Visual) ---
         function updateUI() {
-            const checkedCount = getCheckedCount();
+            // 2.1 Cálculo de itens marcados e totais baseados em IDs únicos (evita erro DK/MB)
+            const selectedCheckboxes = document.querySelectorAll('.disciplina-checkbox:checked');
+            const uniqueIdsSelected = new Set(Array.from(selectedCheckboxes).map(cb => cb.value));
+            const checkedCount = uniqueIdsSelected.size;
+
+            const allUniqueIdsOnPage = new Set(Array.from(checkboxes).map(cb => cb.value)).size;
             const isMobile = window.innerWidth <= 768;
 
-            // 3.1 Controle do Botão de Exclusão Desktop (DK)
+            // 2.2 Controle do Checkbox Mestre (Selecionar Todos)
+            const isAllSelected = (allUniqueIdsOnPage > 0 && checkedCount === allUniqueIdsOnPage);
+            if (selectAll) {
+                selectAll.checked = isAllSelected;
+            }
+
+            // 2.3 Sincronização dos Checkboxes de Grupo no Mobile
+            document.querySelectorAll('.mobile-group').forEach(group => {
+                const groupSelect = group.querySelector('.select-group-checkbox');
+                const groupCheckboxes = group.querySelectorAll('.disciplina-checkbox');
+                if (groupSelect && groupCheckboxes.length > 0) {
+                    // Marca o checkbox do grupo apenas se TODOS os itens do grupo estiverem marcados
+                    groupSelect.checked = Array.from(groupCheckboxes).every(c => c.checked);
+                }
+            });
+
+            // 2.4 Controle do Botão de Exclusão Desktop (DK)
             if (bulkContainer) {
                 if (checkedCount > 0 && !isMobile) {
                     bulkContainer.style.visibility = 'visible';
@@ -233,7 +254,7 @@
                 }
             }
 
-            // 3.2 Controle do Botão Flutuante Mobile (MB)
+            // 2.5 Controle do Botão Flutuante Mobile (MB)
             if (btnFabDelete) {
                 if (checkedCount > 0 && isMobile) {
                     btnFabDelete.style.display = 'flex';
@@ -242,15 +263,15 @@
                 }
             }
 
-            // 3.3 Lógica de Destaque Visual (Linhas coloridas)
+            // 2.6 Lógica de Destaque Visual (DK + MB)
             document.querySelectorAll('.disciplina-checkbox').forEach(cb => {
-                // Tabela Desktop
+                // Aplica destaque na linha da tabela Desktop
                 const row = cb.closest('tr');
                 if (row) {
                     cb.checked ? row.classList.add('row-selected') : row.classList.remove('row-selected');
                 }
 
-                // Lista Mobile
+                // Aplica destaque no card da lista Mobile
                 const mobileRow = cb.closest('.mobile-item-row');
                 if (mobileRow) {
                     cb.checked ? mobileRow.classList.add('item-selected') : mobileRow.classList.remove('item-selected');
