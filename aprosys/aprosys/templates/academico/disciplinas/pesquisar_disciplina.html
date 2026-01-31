@@ -122,16 +122,13 @@
     </form>
 
     <script>
-        
         document.addEventListener('DOMContentLoaded', function() {
-            
             // --- 1. Seleção de Elementos e Dados ---
             let rawData = [];
             const dataElement = document.getElementById('disciplinas-data');
             
             if (dataElement) {
                 try {
-                    // Garante que o dado seja um Array, mesmo que venha como string do Django
                     const content = dataElement.textContent.trim();
                     rawData = JSON.parse(content);
                     if (typeof rawData === 'string') rawData = JSON.parse(rawData);
@@ -160,7 +157,6 @@
                 if (!mobileListContent || !Array.isArray(rawData)) return;
                 mobileListContent.innerHTML = ''; 
 
-                // Agrupamento dos dados baseados no critério selecionado
                 const grupos = rawData.reduce((acc, item) => {
                     const chave = criterio === 'status' ? item.status_display : item.area_display;
                     if (!acc[chave]) acc[chave] = [];
@@ -168,11 +164,9 @@
                     return acc;
                 }, {});
 
-                // Ordenação alfabética dos títulos dos grupos (Ativo/Inativo ou Áreas)
                 Object.keys(grupos).sort().forEach(titulo => {
                     const itens = grupos[titulo];
                     const groupDiv = document.createElement('div');
-                    // Mantém o comportamento de iniciar 'Inativo' recolhido
                     groupDiv.className = `mobile-group ${titulo === 'Inativo' ? 'collapsed' : ''}`;
 
                     groupDiv.innerHTML = `
@@ -202,7 +196,6 @@
                     mobileListContent.appendChild(groupDiv);
                 });
 
-                // RE-VINCULA EVENTOS: Essencial após reconstruir o HTML
                 vincularEventosMestre();
                 updateUI(); 
             }
@@ -210,7 +203,6 @@
             // --- 3. Funções de Sincronização e Interface ---
 
             function vincularEventosMestre() {
-                // Toggle (Setas)
                 document.querySelectorAll('.filter-toggle').forEach(arrow => {
                     arrow.onclick = function(e) {
                         e.stopPropagation();
@@ -218,7 +210,6 @@
                     };
                 });
 
-                // Checkbox de Cabeçalho de Grupo
                 document.querySelectorAll('.select-group-checkbox').forEach(gs => {
                     gs.onchange = function() {
                         const isChecked = this.checked;
@@ -231,7 +222,6 @@
                     };
                 });
 
-                // Checkbox Individual
                 document.querySelectorAll('.disciplina-checkbox').forEach(cb => {
                     cb.onchange = function() {
                         sincronizarCheckbox(this.value, this.checked);
@@ -241,7 +231,6 @@
             }
 
             function sincronizarCheckbox(id, estado) {
-                // Marca/Desmarca em todas as instâncias (DK e MB)
                 document.querySelectorAll(`.disciplina-checkbox[value="${id}"]`).forEach(el => {
                     el.checked = estado;
                 });
@@ -250,33 +239,27 @@
             function updateUI() {
                 const selected = document.querySelectorAll('.disciplina-checkbox:checked');
                 const checkedCount = new Set(Array.from(selected).map(cb => cb.value)).size;
-                
                 const allCbs = document.querySelectorAll('.disciplina-checkbox');
                 const totalUnique = new Set(Array.from(allCbs).map(cb => cb.value)).size;
-                
                 const isMobile = window.innerWidth <= 768;
 
-                // Checkbox Mestre (Selecionar Todos)
                 if (selectAll) selectAll.checked = (totalUnique > 0 && checkedCount === totalUnique);
 
-                // Atualiza visual dos botões de exclusão
                 if (bulkContainer) {
                     bulkContainer.style.display = (checkedCount > 0 && !isMobile) ? 'block' : 'none';
                     bulkContainer.style.visibility = (checkedCount > 0 && !isMobile) ? 'visible' : 'hidden';
                 }
                 if (btnFabDelete) btnFabDelete.style.display = (checkedCount > 0 && isMobile) ? 'flex' : 'none';
 
-                // Destaque visual das linhas/cards
                 document.querySelectorAll('.disciplina-checkbox').forEach(cb => {
                     const row = cb.closest('tr');
                     if (row) cb.checked ? row.classList.add('row-selected') : row.classList.remove('row-selected');
-                    
                     const mRow = cb.closest('.mobile-item-row');
                     if (mRow) cb.checked ? mRow.classList.add('item-selected') : mRow.classList.remove('item-selected');
                 });
             }
 
-            // --- 4. Eventos de Filtro, Pesquisa e Exclusão ---
+            // --- 4. Eventos de Filtro (Pílulas Status/Área) ---
 
             btnStatus.onclick = () => {
                 btnStatus.classList.add('active');
@@ -290,12 +273,30 @@
                 renderMobileUI('area');
             };
 
+            // --- 5. Eventos de Pesquisa e Limpeza (AQUI ESTAVA O ERRO!) ---
+
+            if (searchInput && searchForm) {
+                searchInput.addEventListener('keydown', e => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        searchForm.submit();
+                    }
+                });
+            }
+
+            if (clearBtn && searchInput && searchForm) {
+                clearBtn.addEventListener('click', () => {
+                    searchInput.value = ''; // Limpa o texto
+                    searchForm.submit();    // Envia o formulário vazio para resetar a busca
+                });
+            }
+
+            // --- 6. Eventos de Seleção e Exclusão em Massa ---
+
             if (selectAll) {
                 selectAll.onchange = function() {
                     const isChecked = this.checked;
-                    document.querySelectorAll('.disciplina-checkbox').forEach(cb => {
-                        cb.checked = isChecked;
-                    });
+                    document.querySelectorAll('.disciplina-checkbox').forEach(cb => cb.checked = isChecked);
                     updateUI();
                 };
             }
@@ -313,16 +314,16 @@
             if (btnDeleteSelected) btnDeleteSelected.onclick = executarBulkDelete;
             if (btnFabDelete) btnFabDelete.onclick = executarBulkDelete;
 
-            // Inicialização da interface
+            // Inicialização padrão
             renderMobileUI('status');
-        });
 
-        // Função global para exclusão unitária (links dinâmicos)
+        }); // Fim do DOMContentLoaded
+
+        // Função global (fora do DOMContentLoaded para ser acessível pelos links dinâmicos)
         function confirmarExclusaoUnica(id, nome) {
             if (confirm(`Excluir ${nome}?`)) {
                 window.location.href = `/academico/disciplinas/excluir/${id}/`;
             }
         }
-
     </script>
 {% endblock %}
