@@ -200,8 +200,8 @@ def pesquisar_disciplina(request):
 
     disciplinas = Disciplina.objects.all()
 
+    # 1. Filtro de permissão do Professor
     if voluntario and voluntario.tipo_voluntario == 'PROFESSOR':
-        # Disciplinas vinculadas ao professor via TurmaDisciplinaProfessor
         disciplina_ids = (
             TurmaDisciplinaProfessor.objects.filter(
                 voluntario=voluntario, status=1, turma_disciplina__status=1
@@ -211,11 +211,18 @@ def pesquisar_disciplina(request):
         )
         disciplinas = disciplinas.filter(id__in=disciplina_ids)
 
+    # 2. Filtro de pesquisa por texto
     if q:
         disciplinas = disciplinas.filter(
             Q(nome__icontains=q) | Q(area_conhecimento__icontains=q)
         )
 
+    # --- NOVO: Contagens para a Interface Mobile (MB) ---
+    # Fazemos isso antes da ordenação final para otimizar
+    total_ativos = disciplinas.filter(status=True).count()
+    total_inativos = disciplinas.filter(status=False).count()
+
+    # 3. Ordenação
     allowed_fields = {
         'nome': 'nome',
         'area_conhecimento': 'area_conhecimento',
@@ -239,6 +246,9 @@ def pesquisar_disciplina(request):
             'order': order,
             'dir': direction,
             'active_menu': 'disciplinas',
+            # Passando os totais para o context
+            'total_ativos': total_ativos,
+            'total_inativos': total_inativos,
         },
     )
 
