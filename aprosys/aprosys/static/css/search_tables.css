@@ -125,7 +125,7 @@ tbody tr:last-child td {
 .select-group-checkbox:not(:checked), .group-header input[type="checkbox"]:not(:checked) {
     -webkit-appearance: none;
     appearance: none;
-    border: 1px solid var(--secondary-color);
+    border: 1px solid var(--text-color-medium);
     border-radius: 3px;
     background-color: white;
 }
@@ -221,9 +221,9 @@ tr.row-selected td {
     }
 
     .group-header {
-        color: #00a896 !important;
-        font-style: italic;
-        border-bottom: 2px solid #00a896 !important;
+        font-weight: 700 !important;
+        color: var(--text-color-medium) !important;
+        border-bottom: 2px solid var(--text-color-medium) !important;
         padding-bottom: 8px !important;
         margin-top: 25px !important;
         display: flex !important;
